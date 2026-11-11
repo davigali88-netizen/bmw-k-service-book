@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111417">
+  <meta name="description" content="Libro de servicio local y biblioteca técnica de la serie BMW K.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./documents.css">
+  <title>BMW K Service Book</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#garage" data-view="garage" aria-label="BMW K Service Book">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 80 60"><path d="M8 5h64v39L40 57 8 44z" fill="#222c34" stroke="#aab8c3" stroke-width="2"/><text x="40" y="32" fill="#f1f3f4" font-family="Arial,sans-serif" font-size="28" font-weight="800" text-anchor="middle" letter-spacing="-2">K</text><path d="M20 43h40" stroke="#647987" stroke-width="2"/><path d="M20 48h13" stroke="#a8c7d9" stroke-width="4"/><path d="M33 48h14" stroke="#456e8a" stroke-width="4"/><path d="M47 48h13" stroke="#b94a48" stroke-width="4"/></svg></span>
+        <span><span class="brand-title" data-i18n="brandTitle">BMW K SERVICE BOOK</span><span class="brand-sub" data-i18n="brandSub">FLYING BRICK GARAGE</span></span>
+      </a>
+      <div class="top-actions">
+        <button class="icon-button" id="installBtn" type="button" hidden aria-label="Instalar aplicación" title="Instalar aplicación">↓</button>
+        <button class="icon-button" type="button" data-view="settings" aria-label="Ficha de la moto" title="Ficha de la moto">⚙</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="view active" id="view-garage">
+        <div class="hero-card">
+          <img class="hero-photo" id="vehicleHeroImage" src="./k75s-reference.jpg" alt="BMW K75 S de referencia, no es la moto del usuario">
+          <div class="hero-copy">
+            <div class="eyebrow" data-i18n="garageEyebrow">TU GARAJE / 01</div>
+            <h1 id="heroModel">BMW <span>K75 S</span></h1>
+            <p class="hero-model" id="heroSubline">FLYING BRICK · EUROPA · 1987</p>
+            <div class="engine-chip" id="heroEngine">3 cilindros · refrigeración líquida · ~740 cm³</div>
+            <div class="profile-source eyebrow" data-i18n="profileSource">Datos iniciales aportados por el usuario</div>
+          </div>
+          <div class="hero-footer"><span><span data-i18n="modelLabel">MODELO</span><b id="heroFooterModel">K75 S</b></span><span><span data-i18n="yearLabel">AÑO</span><b id="heroYear">1987</b></span><span><span data-i18n="marketLabel">MERCADO</span><b id="heroMarket">Europa</b></span></div>
+          <a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:BMW_K75S.jpg" target="_blank" rel="noopener">BMW K75S (1991) · Marc Mongenet · CC BY-SA 4.0 ↗</a>
+        </div>
+
+        <div class="section-heading">
+          <div><div class="eyebrow" data-i18n="overviewEyebrow">ESTADO / 02</div><h2 data-i18n="vehicleStatus">Estado de la moto</h2></div>
+          <button class="text-button" type="button" data-view="settings" data-i18n="editVehicle">Editar ficha ↗</button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-label" data-i18n="currentMileage">KILOMETRAJE ACTUAL</span><strong id="currentKm">—</strong><span class="stat-foot" data-i18n="kmRecorded">km registrados</span></article>
+          <article class="stat-card"><span class="stat-label" data-i18n="interventions">INTERVENCIONES</span><strong id="serviceCount">0</strong><span class="stat-foot" data-i18n="inHistory">en el historial</span></article>
+          <article class="stat-card"><span class="stat-label" data-i18n="nextReminder">PRÓXIMO AVISO</span><strong id="nextDue">—</strong><span class="stat-foot" id="nextDueLabel">Sin recordatorios</span></article>
+        </div>
+
+        <div class="section-heading"><div><div class="eyebrow" data-i18n="expensesEyebrow">GASTOS / 03</div><h2 data-i18n="yearExpenses">Gastos del año</h2></div><span class="year-badge" id="expenseYear"></span></div>
+        <div class="expense-grid">
+          <article class="stat-card"><span class="stat-label" data-i18n="annualTotal">TOTAL DEL AÑO</span><strong id="annualTotal">0,00 €</strong><span class="stat-foot" data-i18n="costedEntries">intervenciones con coste</span></article>
+          <article class="stat-card"><span class="stat-label" data-i18n="averageEntry">MEDIA POR INTERVENCIÓN</span><strong id="annualAverage">—</strong><span class="stat-foot" data-i18n="basedOnYear">según el historial de este año</span></article>
+          <article class="stat-card category-expense"><span class="stat-label" data-i18n="topCategory">CATEGORÍA CON MÁS GASTO</span><strong id="topCategory">—</strong><span class="stat-foot" id="categoryTotal"> </span></article>
+        </div>
+
+        <div class="section-heading"><div><div class="eyebrow" data-i18n="quickEyebrow">ACCESO RÁPIDO / 04</div><h2 data-i18n="serviceBook">Tu libro de servicio</h2></div></div>
+        <div class="quick-grid">
+          <button class="quick-card" type="button" data-view="service"><span class="quick-icon">＋</span><b data-i18n="addService">Añadir intervención</b><small data-i18n="recordMaintenance">Registrar trabajo</small></button>
+          <button class="quick-card" type="button" data-view="reminders"><span class="quick-icon">◷</span><b data-i18n="reminders">Recordatorios</b><small data-i18n="upcomingOperations">Próximas operaciones</small></button>
+          <button class="quick-card" type="button" data-view="manual"><span class="quick-icon">⌁</span><b data-i18n="technicalManual">Biblioteca técnica</b><small data-i18n="modelsAndSources">Modelos y fuentes</small></button>
+        </div>
+        <p class="disclaimer" data-i18n="disclaimer">Proyecto personal independiente, no afiliado a BMW AG. Verifica los datos técnicos con documentación aplicable a tu versión. Desarrollada por Sr. Balloneta.</p>
+        <p class="photo-credit-note">Foto de referencia: BMW K75S de 1991, fotografía de Marc Mongenet, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. No representa la unidad del usuario.</p>
+      </section>
+
+      <section class="view" id="view-service">
+        <div class="page-head"><div class="eyebrow" data-i18n="serviceEyebrow">LIBRO DE SERVICIO / 05</div><h1 data-i18n="serviceBook">Libro de servicio</h1><p data-i18n="recordIntro">Registra trabajos realizados; los datos se guardan en este dispositivo.</p></div>
+        <form id="serviceForm" class="panel form-grid">
+          <label class="full"><span data-i18n="operation">Operación</span><input name="title" required maxlength="120" placeholder="Ej. Cambio de aceite" data-i18n-placeholder="serviceExample"></label>
+          <label><span data-i18n="date">Fecha</span><input name="date" type="date" required></label>
+          <label><span data-i18n="mileageKm">Kilometraje (km)</span><input name="km" type="number" min="0" step="1" placeholder="Opcional" data-i18n-placeholder="optional"></label>
+          <label><span data-i18n="category">Categoría</span><select name="category"><option value="Motor" data-category="catEngine">Motor</option><option value="Refrigeración" data-category="catCooling">Refrigeración</option><option value="Embrague / caja" data-category="catClutch">Embrague / caja</option><option value="Cardán / grupo cónico" data-category="catDrive">Cardán / grupo cónico</option><option value="Frenos" data-category="catBrakes">Frenos</option><option value="Suspensión" data-category="catSuspension">Suspensión</option><option value="Electricidad" data-category="catElectrical">Electricidad</option><option value="Neumáticos" data-category="catTires">Neumáticos</option><option value="Otro" data-category="catOther">Otro</option></select></label>
+          <label><span data-i18n="costEuros">Coste total (€)</span><input name="cost" type="number" min="0" step="0.01" placeholder="Opcional" data-i18n-placeholder="optional"></label>
+          <label class="full"><span data-i18n="partsReferences">Piezas / referencias</span><input name="parts" maxlength="240" placeholder="Referencia, marca o nota de compatibilidad" data-i18n-placeholder="partsPlaceholder"></label>
+          <label class="full"><span data-i18n="notes">Notas</span><textarea name="notes" rows="3" maxlength="1200" placeholder="Observaciones de esta intervención" data-i18n-placeholder="serviceNotesPlaceholder"></textarea></label>
+          <div class="form-actions full"><button class="primary-button" id="serviceSubmit" type="submit"><span data-i18n="saveService">Guardar intervención</span><span>↗</span></button><button class="secondary-button" id="cancelServiceEdit" type="button" hidden data-i18n="cancelEdit">Cancelar edición</button></div>
+        </form>
+        <div class="section-heading"><div><div class="eyebrow" data-i18n="historyEyebrow">HISTORIAL / 06</div><h2 data-i18n="history">Historial</h2></div><button class="text-button" id="exportBtn" type="button" data-i18n="exportCsv">Exportar CSV ↓</button></div>
+        <div id="historyList" class="record-list empty-state" aria-live="polite"></div>
+      </section>
+
+      <section class="view" id="view-reminders">
+        <div class="page-head"><div class="eyebrow" data-i18n="plannerEyebrow">PLANIFICADOR / 07</div><h1 data-i18n="reminders">Recordatorios</h1><p data-i18n="scheduleOperations">Programa avisos por fecha o kilometraje.</p></div>
+        <div class="warning-note"><b data-i18n="verifiedOnly">Plan orientativo · fuente secundaria</b><span data-i18n="reminderSourceNote">La agenda facilitada enumera BMW K75, K100, K1100 y K1, pero no confirma mercado ni variante. El plan usa sus intervalos genéricos y parte del kilometraje exacto actual; contrasta la aplicabilidad y el último mantenimiento antes de usarlo.</span></div>
+        <div class="plan-actions">
+          <button class="secondary-button" id="generateBasePlanBtn" type="button" data-i18n="generateBasePlan">Generar plan base</button>
+          <p id="basePlanStatus" aria-live="polite"></p>
+        </div>
+        <form id="reminderForm" class="panel form-grid">
+          <label class="full"><span data-i18n="operation">Operación</span><input name="title" required maxlength="120" placeholder="Ej. Revisar frenos" data-i18n-placeholder="reminderExample"></label>
+          <label><span data-i18n="dueKm">Vencimiento (km)</span><input name="km" type="number" min="0" step="1" placeholder="Opcional" data-i18n-placeholder="optional"></label>
+          <label><span data-i18n="deadline">Fecha límite</span><input name="date" type="date"></label>
+          <label class="full"><span data-i18n="notes">Notas</span><input name="notes" maxlength="500" placeholder="Fuente o referencia (opcional)" data-i18n-placeholder="referenceOptional"></label>
+          <button class="primary-button full" type="submit"><span data-i18n="createReminder">Crear recordatorio</span><span>＋</span></button>
+        </form>
+        <div class="section-heading"><div><div class="eyebrow" data-i18n="upcomingEyebrow">AVISOS / 08</div><h2 data-i18n="upcomingOperations">Próximas operaciones</h2></div></div>
+        <p class="torque-source-note" data-i18n="reminderDisclaimer">Un aviso vence al alcanzar la fecha o el kilometraje, lo que ocurra primero. El kilometraje actual no indicado no se estima.</p>
+        <div id="reminderList" class="record-list empty-state" aria-live="polite"></div>
+      </section>
+
+      <section class="view" id="view-manual">
+        <div class="page-head"><div class="eyebrow" data-i18n="manualEyebrow">DATOS DE TALLER / 09</div><h1 data-i18n="technicalManual">Biblioteca técnica</h1><p data-i18n="manualIntro">Esta pantalla muestra una ficha para la moto activa del garaje, con fuentes y aplicabilidad visibles.</p></div>
+        <div class="warning-note"><b data-i18n="sourceStatus">Estado de las fuentes</b><span data-i18n="libraryNote">Las fuentes secundarias discrepan en algunos intervalos y no confirman la aplicabilidad exacta. Las capacidades y especificaciones BMW siguen pendientes.</span></div>
+        <div class="manual-list" id="modelLibrary"></div>
+        <div class="panel data-panel">
+          <h2 data-i18n="referenceLinks">Fuentes y manuales</h2>
+          <p data-i18n="officialFirst">BMW Motorrad es la fuente principal. Los catálogos externos son referencias secundarias y no sustituyen la documentación de taller.</p>
+          <a class="source-link" href="https://manuals.bmw-motorrad.com/" target="_blank" rel="noopener" data-i18n="officialManuals">Consultar manuales BMW Motorrad ↗</a>
+          <a class="source-link" href="https://www.realoem.com/bmw/enUS/select?product=M&archive=1" target="_blank" rel="noopener" data-i18n="oemCatalog">Catálogo de piezas RealOEM · fuente secundaria ↗</a>
+          <a class="source-link" href="https://commons.wikimedia.org/wiki/Category:BMW_K75" target="_blank" rel="noopener" data-i18n="kSeriesTribute">Homenaje a la serie K · imágenes y documentación en Wikimedia Commons ↗</a>
+          <p class="disclaimer" data-i18n="manualCopyright">Los PDF facilitados por el usuario se incluyen con autorización para publicarlos en esta aplicación y se abren en su idioma original. La disponibilidad sin conexión depende de que el navegador haya guardado el archivo completo.</p>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="page-head"><div class="eyebrow" data-i18n="settingsEyebrow">FICHA DEL GARAJE / 10</div><h1 data-i18n="vehicleSheet">Ficha de la moto</h1><p data-i18n="localDataDescription">Datos personales guardados localmente en este dispositivo.</p></div>
+        <form id="vehicleForm" class="panel form-grid">
+          <label><span data-i18n="model">Modelo</span><select name="model"><option>BMW K75 C</option><option>BMW K75 S</option><option>BMW K75 RT</option><option>BMW K100</option><option>BMW K100 RS</option><option>BMW K100 RT</option><option>BMW K100 LT</option><option>BMW K1</option><option>BMW K1100 RS</option><option>BMW K1100 LT</option></select></label>
+          <label><span data-i18n="buildYear">Año de fabricación</span><input name="year" type="number" min="1980" max="1995" inputmode="numeric"></label>
+          <label><span data-i18n="market">Mercado</span><input name="market" maxlength="60" placeholder="Europa" data-i18n-placeholder="marketPlaceholder"></label>
+          <label><span data-i18n="buildDate">Fecha de fabricación</span><input name="buildDate" type="month"></label>
+          <label><span data-i18n="firstRegistration">Fecha de primera matriculación</span><input name="registrationDate" type="date"></label>
+          <label><span data-i18n="currentMileageKm">Kilometraje actual (km)</span><input name="km" type="number" min="0" step="1" placeholder="Sin lectura exacta" data-i18n-placeholder="unknownOdometer"></label>
+          <label><span data-i18n="abs">ABS</span><select name="abs"><option value="" data-i18n="absPending">Pendiente de confirmar</option><option value="yes" data-i18n="yes">Sí</option><option value="no" data-i18n="no">No</option></select></label>
+          <label><span data-i18n="gearboxCode">Código de caja</span><input name="gearboxCode" maxlength="80" placeholder="Pendiente de identificar" data-i18n-placeholder="idPending"></label>
+          <label><span data-i18n="finalDriveCode">Código / marcado del grupo final</span><input name="finalDriveCode" maxlength="80" placeholder="Pendiente de identificar" data-i18n-placeholder="idPending"></label>
+          <label class="full"><span data-i18n="vin">VIN (opcional)</span><input name="vin" maxlength="17" autocomplete="off" autocapitalize="characters" placeholder="Se guarda solo en este dispositivo" data-i18n-placeholder="vinPlaceholder"></label>
+          <label class="full"><span data-i18n="engineDetails">Motor / notas confirmadas</span><input name="engine" maxlength="180"></label>
+          <button class="primary-button full" type="submit"><span data-i18n="saveVehicle">Guardar ficha</span><span>↗</span></button>
+          <p class="full private-note" data-i18n="vinNote">El VIN no se envía ni se consulta en línea. La decodificación local queda pendiente de una tabla fiable; no se deducen equipamientos.</p>
+        </form>
+        <div class="panel photo-panel"><h2 data-i18n="vehiclePhoto">Foto de la moto</h2><p data-i18n="photoDescription">La foto de referencia no representa tu unidad. Tu foto se reduce y guarda solo en este dispositivo.</p><label class="import-label"><span data-i18n="choosePhoto">Añadir foto propia</span><input id="vehiclePhotoInput" type="file" accept="image/jpeg,image/png,image/webp"></label><button class="secondary-button" id="useGenericPhoto" type="button" data-i18n="useGenericPhoto">Volver a la foto de referencia</button></div>
+        <div class="panel data-panel"><h2 data-i18n="yourData">Tus datos</h2><p data-i18n="localStorageDescription">Historial, recordatorios y ficha permanecen en el almacenamiento local del navegador. No hay cuentas ni sincronización.</p><div class="form-actions"><button class="secondary-button" id="backupBtn" type="button" data-i18n="downloadBackup">Descargar copia JSON ↓</button><button class="secondary-button" id="exportAllCsvBtn" type="button" data-i18n="exportAllCsv">Exportar historial CSV ↓</button></div><label class="import-label"><span data-i18n="restoreBackup">Restaurar copia JSON</span><input id="importFile" type="file" accept="application/json"></label></div>
+        <div class="panel language-panel"><h2 data-i18n="languageSettings">Idioma de la interfaz</h2><label for="languageSelect" data-i18n="chooseLanguage">Selecciona el idioma</label><select id="languageSelect"><option value="es">Español</option><option value="en">English</option></select><p data-i18n="languageDataNote">El idioma afecta la interfaz; no traduce los datos personales ni las fuentes técnicas originales.</p></div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="nav-item active" type="button" data-view="garage"><span>⌂</span><b data-i18n="garage">Garaje</b></button>
+    <button class="nav-item" type="button" data-view="service"><span>＋</span><b data-i18n="serviceNav">Historial</b></button>
+    <button class="nav-item" type="button" data-view="reminders"><span>◷</span><b data-i18n="alertsNav">Avisos</b></button>
+    <button class="nav-item" type="button" data-view="manual"><span>⌁</span><b data-i18n="manualNav">Fichas</b></button>
+  </nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>

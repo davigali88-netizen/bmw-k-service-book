@@ -1,0 +1,5 @@
+@media(max-width:560px){
+  .document-card{align-items:flex-start;flex-direction:column}
+  .document-actions{justify-content:flex-start}
+  .document-actions a{font-size:8px;padding:6px}
+}

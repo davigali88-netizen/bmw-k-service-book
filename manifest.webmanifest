@@ -1,0 +1,19 @@
+{
+  "name": "BMW K Service Book",
+  "short_name": "BMW K Book",
+  "description": "Libro de servicio local y biblioteca técnica para la serie BMW K.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111417",
+  "theme_color": "#111417",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
