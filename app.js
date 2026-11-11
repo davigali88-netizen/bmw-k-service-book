@@ -53,11 +53,17 @@ const TEXT = {
     serviceDeleted: 'Intervención eliminada', cancelDelete: '¿Eliminar esta intervención?',
     plannerEyebrow: 'PLANIFICADOR / 07', scheduleOperations: 'Programa avisos por fecha o kilometraje.',
     verifiedOnly: 'Plan orientativo · fuente secundaria',
-    reminderSourceNote: 'El plan se basa en una agenda secundaria genérica para K75/K100/K1100/K1, no en un programa BMW confirmado para esta unidad. La guía personal de 2019 aporta intervalos distintos para algunas tareas. Verifica variante, mercado y último mantenimiento antes de usarlo.',
+    pendingPlanTitle: 'Plan verificado pendiente',
+    k75PlanTitle: 'Intervalos K75 · Moto Técnica',
+    reminderSourceNote: 'El plan genérico procede de una agenda secundaria para varias series K. No confirma la variante ni el último mantenimiento; contrasta cada operación con documentación aplicable.',
+    k75ReminderSourceNote: 'Para K75 se prioriza la tabla de Moto Técnica n.º 14 (1996), p. 26. Es una revista técnica independiente, no documentación oficial de BMW AG. El plan parte del kilometraje actual, no del último servicio registrado.',
+    unverifiedScheduleNote: 'La agenda genérica es secundaria y no se usa para generar avisos porque su aplicabilidad a esta variante no está verificada.',
     generateBasePlan: 'Generar plan base', basePlanNeedsMileage: 'Introduce primero el kilometraje actual exacto en la ficha del garaje.',
-    basePlanUnsupported: 'La agenda no incluye este modelo.',
+    basePlanUnsupported: 'No hay un plan de mantenimiento verificado para este modelo y año.',
     basePlanAlreadyExists: 'Ya hay un plan base para este modelo y año.',
     basePlanReady: 'Se usarán los límites inferiores de los rangos publicados; los avisos se calculan desde el kilometraje actual y la fecha de creación.',
+    k75BasePlanReady: 'Plan K75 en km; se calcula desde la lectura actual y la fecha de creación, sin asumir el último servicio.',
+    k75PendingPlanNote: 'Intervalos K75 pendientes para este año: Moto Técnica cubre modelos 1986–1991.',
     basePlanCreated: 'Plan base generado. Verifica cada operación con la documentación de tu moto.',
     basePlanSource: 'Fuente secundaria: manuales/agenda-mantenimiento-en.pdf (agenda K-Models facilitada por el propietario).',
     basePlanApplicability: 'Aplicabilidad exacta a esta variante y mercado pendiente de confirmar.',
@@ -73,18 +79,61 @@ const TEXT = {
     planSplines: 'Lubricar estriados aplicables',
     planEngineOilSevere: 'Cambiar aceite y filtro (trayectos cortos o frío)',
     planAirFilterDust: 'Comprobar filtro de aire (polvo)',
-    planServiceRange: 'La agenda indica BMW Service cada 4.000–6.000 mi (6.437–9.656 km); el plan usa 4.000 mi (6.437 km).',
-    planInspectionRange: 'La agenda indica BMW Inspection cada 8.000–12.000 mi (12.875–19.312 km); el plan usa 8.000 mi (12.875 km).',
+    planServiceRange: 'La agenda secundaria indica servicio cada 6.437–9.656 km; el plan usa 6.437 km.',
+    planInspectionRange: 'La agenda secundaria indica inspección cada 12.875–19.312 km; el plan usa 12.875 km.',
     planAnnualServiceNote: 'La agenda secundaria incluye una revisión anual, sin definir aquí todos sus trabajos.',
     planBrakeInterval: 'La agenda indica DOT 4 y sustitución anual; no especifica capacidad.',
     planCoolantInterval: 'La agenda indica sustitución cada 2 años; no da capacidad ni una especificación química BMW.',
-    planFuelFilterInterval: 'La agenda indica 12.000 mi (19.312 km) con combustible deficiente o 24.000 mi (38.624 km) en condiciones normales. El plan usa 12.000 mi.',
-    planPoorFuel: 'El plan usa el intervalo de 12.000 mi (19.312 km); la fuente permite 24.000 mi (38.624 km) con combustible de calidad normal.',
-    planBearingsNote: 'La agenda indica sustitución a 25.000 mi (40.234 km); inspecciona holgura y estado antes de sustituir.',
-    planChainNote: 'La agenda suministrada indica 36.000 mi (57.936 km). Aplicabilidad exacta pendiente.',
-    planSplineNote: 'La agenda indica lubricación anual; para motos fabricadas desde 1990 indica 40.000 mi (64.374 km).',
-    planColdOilNote: 'Solo para trayectos cortos o temperaturas inferiores a 32 °F: 3 meses o 1.800 mi (2.897 km), lo que ocurra primero. La guía personal de 2019 sugiere otros intervalos de aceite; ninguno está confirmado por BMW para esta unidad.',
-    planDustNote: 'Solo en uso con polvo: la agenda indica revisar a 6.000 mi (9.656 km) y con mayor frecuencia.',
+    planFuelFilterInterval: 'La agenda indica 19.312 km con combustible deficiente o 38.624 km en condiciones normales. El plan usa 19.312 km.',
+    planPoorFuel: 'El plan usa 19.312 km; la fuente permite 38.624 km con combustible de calidad normal.',
+    planBearingsNote: 'La agenda secundaria indica 40.234 km; inspecciona holgura y estado antes de sustituir.',
+    planChainNote: 'La agenda secundaria indica 57.936 km. Aplicabilidad exacta pendiente.',
+    planSplineNote: 'La agenda indica lubricación anual; para motos fabricadas desde 1990 indica 64.374 km.',
+    planColdOilNote: 'Solo para trayectos cortos o temperatura ambiente inferior a 0 °C: 3 meses o 2.897 km, lo que ocurra primero. La guía personal de 2019 sugiere otros intervalos de aceite; ninguno está confirmado por BMW para esta unidad.',
+    planDustNote: 'Solo en uso con polvo: la agenda indica revisar a 9.656 km y con mayor frecuencia.',
+    planK75OilLevel: 'Comprobar nivel de aceite del motor',
+    planK75OilChange: 'Cambiar aceite del motor',
+    planK75OilFilter: 'Sustituir filtro de aceite',
+    planK75CoolantCheck: 'Comprobar refrigerante y manguitos',
+    planK75CoolantChange: 'Renovar refrigerante',
+    planK75AirFilter: 'Sustituir filtro de aire',
+    planK75FuelFilter: 'Sustituir filtro de gasolina',
+    planK75SparkCheck: 'Comprobar / limpiar bujías y separación',
+    planK75SparkReplace: 'Sustituir bujías',
+    planK75ValveClearance: 'Comprobar juego de válvulas',
+    planK75TransmissionOil: 'Cambiar aceite de caja y grupo cónico',
+    planK75ForkOil: 'Cambiar aceite de horquilla',
+    planK75BrakeFluid: 'Sustituir líquido de frenos DOT 4',
+    planK75BrakePads: 'Comprobar desgaste de pastillas de freno',
+    planK75BrakeShoes: 'Comprobar desgaste de segmentos de freno',
+    planK75Steering: 'Comprobar dirección y rodamientos',
+    planK75Tyres: 'Comprobar presión y estado de neumáticos',
+    planK75Abs: 'Comprobar entrehierro de captadores ABS',
+    k75OilLevelFrequency: 'Cada 500 km.',
+    k75OilChangeFrequency: 'Cada 7.500 km o 6 meses; cada 3 meses con trayectos cortos o temperatura inferior a 0 °C.',
+    k75OilFilterFrequency: 'Cada 15.000 km; primera sustitución a los 1.000 km.',
+    k75CoolantCheckFrequency: 'Cada 7.500 km; primera comprobación a los 1.000 km.',
+    k75CoolantChangeFrequency: 'Cada 2 años.',
+    k75AirFilterFrequency: 'Cada 15.000 km; cada 7.500 km o antes en ambientes polvorientos.',
+    k75FuelFilterFrequency: 'Cada 30.000 km; cada 15.000 km si el uso es escaso.',
+    k75SparkCheckFrequency: 'Revisión y limpieza cada 7.500 km; sustitución cada 15.000 km.',
+    k75SparkReplaceFrequency: 'Cada 15.000 km.',
+    k75ValveClearanceFrequency: 'Cada 7.500 km; primera comprobación a los 1.000 km.',
+    k75TransmissionOilFrequency: 'Cada 15.000 km o, como mínimo, cada año; primera operación a los 1.000 km.',
+    k75ForkOilFrequency: 'Primera operación a los 1.000 km y después cada 15.000 km.',
+    k75BrakeFluidFrequency: 'Cada 2 años. DOT 4; la fuente no indica capacidad.',
+    k75BrakePadsFrequency: 'Comprobar cada 7.500 km.',
+    k75BrakeShoesFrequency: 'Comprobar cada 7.500 km; aplicable a la configuración con freno trasero de tambor.',
+    k75SteeringFrequency: 'Primera comprobación a los 1.000 km y después cada 15.000 km.',
+    k75TyresFrequency: 'Cada 1.000 km.',
+    k75AbsFrequency: 'A los 1.000 km, cada 7.500 km y cada vez que se desmonte una rueda; solo si equipa ABS.',
+    k75ScheduleSource: 'Fuente prioritaria del proyecto: Moto Técnica, estudio BMW K75 1986–1991, n.º 14 (1996), tabla p. 26. La revista no es documentación oficial de BMW AG.',
+    k75ScheduleApplicability: 'Aplicable a la tabla de mantenimiento de K75; motor y fluidos compartidos por las variantes K75. Las comprobaciones de frenos, ABS y horquilla dependen del equipamiento. El plan no presupone el historial.',
+    k100ScheduleSource: 'La agenda K-Models es una fuente secundaria genérica; no se dispone aquí de una tabla de mantenimiento verificada para esta variante K100.',
+    k100ScheduleApplicability: 'Los datos de fluidos K100 mostrados se limitan a motores de 2 válvulas cubiertos por Haynes 1988. No se extrapolan a K100 4V, K1 ni K1100.',
+    k75EngineGroup: 'K75 · motor tricilíndrico común a K75 C, S y RT',
+    k100EngineGroup: 'K100 · motor de 2 válvulas cubierto por Haynes 1988',
+    unverifiedEngineGroup: 'Pendiente de identificar la familia de motor aplicable',
     dueKm: 'Vencimiento (km)', deadline: 'Fecha límite', createReminder: 'Crear recordatorio',
     upcomingEyebrow: 'AVISOS / 08', reminderDisclaimer: 'Un aviso vence al alcanzar la fecha o el kilometraje, lo que ocurra primero. El kilometraje actual no indicado no se estima.',
     createReminderName: 'Escribe una operación.', chooseReminderLimit: 'Indica una fecha o un kilometraje.',
@@ -92,13 +141,15 @@ const TEXT = {
     completed: 'COMPLETADO', overdue: 'VENCIDO', pending: 'PENDIENTE', markDone: 'Hecho', reactivate: 'Reactivar',
     noPending: 'No tienes recordatorios pendientes.', manualEyebrow: 'DATOS DE TALLER / 09',
     manualIntro: 'Esta pantalla muestra una sola ficha: la variante activa del garaje. Cambia el modelo o el año en los datos de la moto.',
-    sourceStatus: 'Estado de las fuentes',     libraryNote: 'La agenda K-Models y la guía personal de 2019 son fuentes secundarias y discrepan en algunos intervalos. Ninguna confirma la aplicabilidad exacta a esta K75 S europea de 1987. Capacidades y especificaciones BMW quedan pendientes; los pares disponibles son solo una tabla K75/K100 no oficial.',
+    sourceStatus: 'Estado de las fuentes', libraryNote: 'Para K75 se prioriza Moto Técnica (revista técnica independiente, no oficial BMW AG), contrastada con Haynes 1988. Para K100 solo se muestran datos de motores 2V cubiertos por Haynes 1988. No se extrapolan datos a K100 4V, K1 o K1100.',
     technicalSheet: 'Ficha del vehículo', applicability: 'Aplicabilidad', unknown: 'Pendiente de contrastar',
     manufactureYears: 'Año de fabricación', europeanBase: 'Mercado europeo como base',
-    engine: 'Motor', displacement: 'Cilindrada', power: 'Potencia', cooling: 'Refrigeración',
+    engine: 'Motor', engineFamily: 'Familia de motor', displacement: 'Cilindrada', power: 'Potencia', cooling: 'Refrigeración',
     maintenance: 'Mantenimiento e intervalos', fluids: 'Fluidos y capacidades',
-    maintenanceSource: 'Agenda secundaria K-Models facilitada: intervalos genéricos para varias series K. La guía personal dws (2019) recomienda 6.000 mi (9.656 km) con aceite convencional o 10.000 mi (16.093 km) con sintético; para el filtro de combustible, anual o 10.000 mi (16.093 km).',
-    maintenanceApplicability: 'La agenda indica 12.000/24.000 mi (19.312/38.624 km) para el filtro según combustible; también difieren los intervalos de caja, grupo final y horquilla. El plan usa solo la agenda secundaria. Ningún intervalo está confirmado por BMW para esta K75 S europea de 1987.',
+    maintenancePendingTitle: 'Intervalos pendientes',
+    maintenancePendingNote: 'No se muestran intervalos sin una fuente aplicable y contrastada para este modelo/año.',
+    maintenanceSource: 'Agenda secundaria K-Models facilitada; intervalos genéricos de varias series K. Las recomendaciones personales dws (2019) no se consideran intervalos BMW.',
+    maintenanceApplicability: 'La agenda genérica no confirma la aplicabilidad exacta por modelo, año o mercado. Para K75 se usa la tabla de Moto Técnica en km; para el resto, los intervalos permanecen secundarios o pendientes.',
     torque: 'Pares de apriete', oem: 'Referencias OEM', oemNote: 'Catálogo externo enlazado; compatibilidad y sustituciones pendientes de validar por variante/VIN.',
     pendingValue: 'Pendiente de fuente BMW aplicable', pendingOem: 'Pendiente de validar por variante y número de pieza',
     buildDate: 'Fecha de fabricación', firstRegistration: 'Primera matriculación', abs: 'ABS',
@@ -107,26 +158,57 @@ const TEXT = {
     engineOil: 'Aceite del motor', coolant: 'Refrigerante', brakeFluid: 'Líquido de frenos',
     gearboxFluid: 'Aceite de caja', finalDriveFluid: 'Aceite del grupo final', forkOil: 'Aceite de horquilla',
     sourcePending: 'Pendiente de fuente y aplicabilidad confirmadas',
-    fluidUnknownTypeCapacity: 'Especificación BMW y capacidad para esta variante: pendientes.',
-    fluidSource: 'Fuente secundaria: agenda K-Models facilitada por el propietario.',
-    fluidPersonalGuide: 'Contraste: guía personal EN - K_Bike_General_Maintenance_V1.3 (dws, 2019); no es documentación BMW.',
+    fluidUnknownTypeCapacity: 'Cantidad o especificación para esta variante: pendiente de una fuente aplicable.',
     secondarySourceLabel: 'Fuente secundaria',
-    fluidApplicability: 'Aplicabilidad a variante, año y mercado exactos pendiente de confirmar.',
-    engineOilGuidance: 'La agenda pide cambiar aceite y filtro con el motor caliente; para trayectos cortos o menos de 32 °F indica 3 meses o 1.800 mi (2.897 km). No fija el intervalo normal. La guía personal de 2019 sugiere 6.000 mi (9.656 km) con aceite convencional o 10.000 mi (16.093 km) con sintético: recomendación secundaria, no BMW.',
-    coolantGuidance: 'La agenda indica sustituir cada 2 años. La guía personal sugiere mezcla 40/60 con agua destilada, pero no confirma producto BMW ni capacidad; no extrapolar la mezcla sin validar compatibilidad.',
-    brakeFluidGuidance: 'La agenda indica DOT 4 y sustitución anual. La capacidad no está indicada; confirmar el fluido aplicable en documentación BMW.',
-    gearboxFluidGuidance: 'La agenda indica cambiar a temperatura de servicio, pero no da tipo, capacidad ni intervalo. La guía personal de 2019 sugiere 20.000 mi (32.187 km) para caja y distingue K75/K100 de 2 válvulas de K100 4V/K1100; no es un intervalo BMW confirmado.',
-    finalDriveFluidGuidance: 'La agenda indica cambiar a temperatura de servicio, pero no da tipo, capacidad ni intervalo. La guía personal de 2019 sugiere 20.000 mi (32.187 km) y distingue K75/K100 de 2 válvulas de K100 4V/K1100; no es un intervalo BMW confirmado.',
-    forkOilGuidance: 'La agenda indica cambiar a temperatura de servicio, sin tipo, capacidad ni intervalo. La guía personal de 2019 sugiere sustitución anual, no una especificación BMW confirmada.',
-    fluidSourceDocument: 'Agenda de mantenimiento · inglés ↗',
-    torqueNote: 'Valores de una tabla secundaria titulada K75/100 Specs, no una fuente BMW. La tabla no confirma año, mercado, variante ni condiciones de montaje; verifica cada par con documentación BMW aplicable antes de usarlo.',
-    torqueSource: 'Fuente secundaria: EN - K75-K100_Torque_Specs.pdf, tabla de una página.',
-    torqueApplicability: 'La tabla combina K75/K100; salvo el punto rotulado expresamente K75, no separa modelo, año o mercado. Sin confirmación BMW.',
-    clutchTorqueCaution: 'La tabla lista 140 Nm para la tuerca de embrague K75. Su nota de procedimiento se refiere explícitamente al K100 y no debe trasladarse a la K75.',
-    torqueOilDrain: 'Tapón de vaciado del motor', torqueOilFilter: 'Tapa del filtro de aceite',
-    torqueGearDrain: 'Tapón de vaciado de caja', torqueGearFill: 'Tapón de llenado de caja',
-    torqueFinalDriveDrain: 'Tapón de vaciado del grupo final', torqueFinalDriveFill: 'Tapón de llenado del grupo final',
-    torqueSparkPlug: 'Bujía', torqueClutchNut: 'Tuerca de embrague K75',
+    torqueNote: 'Moto Técnica expresa estos pares en m.daN; se muestran en Nm tras multiplicar por 10. La revista es la referencia prioritaria del proyecto, no documentación oficial de BMW AG. No se muestran valores sin aplicabilidad suficiente.',
+    torqueSource: 'Fuente prioritaria: Moto Técnica, BMW K75 1986–1991, n.º 14 (1996), pp. 49, 54, 74, 89 y 91.',
+    torqueApplicability: 'Los pares corresponden al componente indicado en la revista K75; confirmar fijación, variante y procedimiento en el manual aplicable antes de intervenir.',
+    torqueSecondarySource: 'Referencia secundaria: EN - K75-K100_Torque_Specs.pdf. Tabla de una página sin autor, año ni variante documentados.',
+    torqueSecondaryApplicability: 'Se muestra solo como referencia provisional para K100 2V; no es una especificación BMW y no se extrapola a K100 4V, K1 o K1100.',
+    torqueHead: 'Apriete de culata (2 etapas)',
+    torqueCamCrank: 'Tornillo delantero del cigüeñal',
+    torqueCamTensioner: 'Tornillo del tensor de distribución',
+    torqueCamSupport: 'Tornillos de semicojinetes de árbol de levas',
+    torqueCamSprocket: 'Tornillos de piñones de árbol de levas',
+    torqueCamCover: 'Tornillos de tapas de árbol de levas',
+    torqueOilDrain: 'Tapón de vaciado del motor',
+    torqueOilFilter: 'Tapa del filtro de aceite',
+    torqueGearDrain: 'Tapón de vaciado de caja',
+    torqueGearFill: 'Tapón de llenado de caja',
+    torqueSparkPlug: 'Bujía',
+    torqueClutchBolts: 'Tornillos de fijación de embrague',
+    torqueForkUpper: 'Sujeción de horquilla · tija superior',
+    torqueForkLower: 'Sujeción de horquilla · tija inferior',
+    torqueSteeringStem: 'Sujeción de columna de dirección',
+    torqueFrontAxleNut: 'Tuerca del eje de rueda delantera',
+    torqueFrontAxlePinch: 'Sujeción del eje de rueda delantera',
+    torqueBrakeCaliper: 'Fijaciones de pinza de freno',
+    torqueRearShock: 'Fijaciones del amortiguador trasero',
+    torqueFinalDriveSwingarm: 'Fijaciones de grupo cónico al basculante',
+    torqueFinalDriveDrain: 'Tapón de vaciado del grupo cónico',
+    torqueFinalDriveFill: 'Tapón de llenado del grupo cónico',
+    torqueWheelBolts: 'Tornillos de fijación de rueda',
+    torqueSourceP49: 'Moto Técnica, p. 49',
+    torqueSourceP54: 'Moto Técnica, p. 54',
+    torqueSourceP74: 'Moto Técnica, p. 74',
+    torqueSourceP89: 'Moto Técnica, p. 89',
+    torqueSourceP91: 'Moto Técnica, p. 91',
+    torqueSourceChart: 'Tabla secundaria K75/100',
+    fluidApplicabilityK75: 'K75 1986–1991; los valores de motor se comparten entre K75 C/S/RT. La horquilla depende de la suspensión.',
+    fluidApplicabilityK100: 'Haynes 1988, motores K100 de 2 válvulas; mercado y variante exactos deben confirmarse. No extrapolar a 4V.',
+    fluidApplicabilityK75Fork: 'K75 S con suspensión Sport; para K75 C y otras horquillas, usar el valor que corresponda a la versión.',
+    fluidPendingForVariant: 'No se extrapola a esta familia, año o configuración; dato pendiente.',
+    fluidEngineOilK75: 'Aceite multigrado API SE/SF; la viscosidad depende de la temperatura ambiente según la tabla de la fuente.',
+    fluidCoolantK75: 'Capacidad total. La revista describe refrigerante con inhibidor compatible con aleaciones ligeras, sin fijar una marca o química concreta.',
+    fluidBrakeK75: 'DOT 4. La capacidad no está indicada en la fuente.',
+    fluidGearboxK75: 'Aceite hipoide API GL-5; SAE 90 por encima de +5 °C y SAE 80 por debajo de +5 °C.',
+    fluidFinalDriveK75: 'Aceite hipoide API GL-5; SAE 80 o SAE 90 según la temperatura exterior.',
+    fluidForkK75: 'Aceite hidráulico para horquilla; la revista enumera varios productos y no fija una viscosidad única.',
+    fluidEngineOilK100: 'Haynes indica aceite de motor de calidad HD, API SE/SF, con filtro.',
+    fluidGearboxK100: 'Haynes indica aceite hipoide API GL-5 (o MIL-L-2105 B/C); SAE 90 sobre +5 °C, SAE 80 bajo +5 °C o SAE 80W-90.',
+    fluidFinalDriveK100: 'Aceite hipoide API GL-5, según Haynes 1988.',
+    fluidBrakeK100: 'DOT 4; Haynes no indica la capacidad.',
+    fluidForkK100: 'Cantidad por brazo según la horquilla descrita en Haynes 1988; confirmar la configuración instalada.',
     manualLanguage: 'Idioma / mercado', documentSource: 'Documento facilitado por el propietario',
     openPdf: 'Abrir PDF ↗', downloadPdf: 'Descargar PDF ↓',
     userManualSpanish: 'Instrucciones · español', maintenanceSchedule: 'Agenda de mantenimiento · inglés',
@@ -195,11 +277,17 @@ const TEXT = {
     serviceDeleted: 'Service entry deleted', cancelDelete: 'Delete this service entry?',
     plannerEyebrow: 'PLANNER / 07', scheduleOperations: 'Schedule by date or mileage.',
     verifiedOnly: 'Base plan · secondary source',
-    reminderSourceNote: 'The plan uses a generic secondary schedule for K75/K100/K1100/K1, not a BMW program confirmed for this motorcycle. The 2019 personal guide gives different intervals for some tasks. Verify the variant, market and last service before relying on it.',
+    pendingPlanTitle: 'Verified plan pending',
+    k75PlanTitle: 'K75 intervals · Moto Técnica',
+    reminderSourceNote: 'The generic plan comes from a secondary schedule for several K series. It does not confirm the exact variant or last service; verify every task against applicable documentation.',
+    k75ReminderSourceNote: 'For the K75, the plan prioritizes the table in Moto Técnica No. 14 (1996), p. 26. It is an independent technical magazine, not official BMW AG documentation. The plan starts from current mileage, not the last recorded service.',
+    unverifiedScheduleNote: 'The generic schedule is secondary and is not used to generate reminders because its applicability to this variant is unverified.',
     generateBasePlan: 'Generate base plan', basePlanNeedsMileage: 'Enter the exact current mileage in the garage details first.',
-    basePlanUnsupported: 'This model is not listed in the schedule.',
+    basePlanUnsupported: 'No verified maintenance plan is available for this model and year.',
     basePlanAlreadyExists: 'A base plan already exists for this model and year.',
     basePlanReady: 'The lower end of published ranges is used; reminders start from the current mileage and plan creation date.',
+    k75BasePlanReady: 'K75 plan in km; calculated from the current reading and creation date, without assuming the last service.',
+    k75PendingPlanNote: 'K75 intervals are pending for this year; Moto Técnica covers 1986–1991 models.',
     basePlanCreated: 'Base plan generated. Verify each operation against your motorcycle documentation.',
     basePlanSource: 'Secondary source: manuales/agenda-mantenimiento-en.pdf (K-Models schedule supplied by the owner).',
     basePlanApplicability: 'Exact applicability to this variant and market is unconfirmed.',
@@ -215,18 +303,61 @@ const TEXT = {
     planSplines: 'Lubricate applicable splines',
     planEngineOilSevere: 'Change engine oil and filter (short trips or cold)',
     planAirFilterDust: 'Inspect air filter (dusty conditions)',
-    planServiceRange: 'The schedule lists BMW Service every 4,000–6,000 mi (6,437–9,656 km); the plan uses 4,000 mi (6,437 km).',
-    planInspectionRange: 'The schedule lists BMW Inspection every 8,000–12,000 mi (12,875–19,312 km); the plan uses 8,000 mi (12,875 km).',
+    planServiceRange: 'The secondary schedule lists service every 6,437–9,656 km; the plan uses 6,437 km.',
+    planInspectionRange: 'The secondary schedule lists inspection every 12,875–19,312 km; the plan uses 12,875 km.',
     planAnnualServiceNote: 'The secondary schedule includes an annual service but does not define all tasks here.',
     planBrakeInterval: 'The schedule lists DOT 4 and annual replacement; capacity is not stated.',
     planCoolantInterval: 'The schedule lists replacement every 2 years; it gives no capacity or BMW chemical specification.',
-    planFuelFilterInterval: 'The schedule lists 12,000 mi (19,312 km) with poor fuel or 24,000 mi (38,624 km) under normal conditions. The plan uses 12,000 mi.',
-    planPoorFuel: 'The plan uses 12,000 mi (19,312 km); the source allows 24,000 mi (38,624 km) with normal fuel quality.',
-    planBearingsNote: 'The schedule lists replacement at 25,000 mi (40,234 km); inspect play and condition before replacing.',
-    planChainNote: 'The supplied schedule lists 36,000 mi (57,936 km). Exact applicability is unconfirmed.',
-    planSplineNote: 'The schedule lists annual lubrication; motorcycles built from 1990 onward are listed at 40,000 mi (64,374 km).',
-    planColdOilNote: 'Only for short trips or temperatures below 32 °F: 3 months or 1,800 mi (2,897 km), whichever comes first. The 2019 personal guide suggests different oil intervals; neither is confirmed by BMW for this motorcycle.',
-    planDustNote: 'Only in dusty use: the schedule lists inspection at 6,000 mi (9,656 km) and more frequent checks.',
+    planFuelFilterInterval: 'The schedule lists 19,312 km with poor fuel or 38,624 km under normal conditions. The plan uses 19,312 km.',
+    planPoorFuel: 'The plan uses 19,312 km; the source allows 38,624 km with normal fuel quality.',
+    planBearingsNote: 'The secondary schedule lists 40,234 km; inspect play and condition before replacing.',
+    planChainNote: 'The secondary schedule lists 57,936 km. Exact applicability is unconfirmed.',
+    planSplineNote: 'The schedule lists annual lubrication; motorcycles built from 1990 onward are listed at 64,374 km.',
+    planColdOilNote: 'Only for short trips or ambient temperatures below 0 °C: 3 months or 2,897 km, whichever comes first. The 2019 personal guide suggests different oil intervals; neither is confirmed by BMW for this motorcycle.',
+    planDustNote: 'Only in dusty use: the schedule lists inspection at 9,656 km and more frequent checks.',
+    planK75OilLevel: 'Check engine oil level',
+    planK75OilChange: 'Change engine oil',
+    planK75OilFilter: 'Replace oil filter',
+    planK75CoolantCheck: 'Check coolant and hoses',
+    planK75CoolantChange: 'Replace coolant',
+    planK75AirFilter: 'Replace air filter',
+    planK75FuelFilter: 'Replace fuel filter',
+    planK75SparkCheck: 'Check / clean spark plugs and gap',
+    planK75SparkReplace: 'Replace spark plugs',
+    planK75ValveClearance: 'Check valve clearances',
+    planK75TransmissionOil: 'Change gearbox and final-drive oil',
+    planK75ForkOil: 'Change fork oil',
+    planK75BrakeFluid: 'Replace DOT 4 brake fluid',
+    planK75BrakePads: 'Check brake pad wear',
+    planK75BrakeShoes: 'Check brake shoe wear',
+    planK75Steering: 'Check steering and bearings',
+    planK75Tyres: 'Check tyre pressure and condition',
+    planK75Abs: 'Check ABS sensor air gap',
+    k75OilLevelFrequency: 'Every 500 km.',
+    k75OilChangeFrequency: 'Every 7,500 km or 6 months; every 3 months for short trips or ambient temperatures below 0 °C.',
+    k75OilFilterFrequency: 'Every 15,000 km; first replacement at 1,000 km.',
+    k75CoolantCheckFrequency: 'Every 7,500 km; first check at 1,000 km.',
+    k75CoolantChangeFrequency: 'Every 2 years.',
+    k75AirFilterFrequency: 'Every 15,000 km; every 7,500 km or sooner in dusty conditions.',
+    k75FuelFilterFrequency: 'Every 30,000 km; every 15,000 km with infrequent use.',
+    k75SparkCheckFrequency: 'Inspect and clean every 7,500 km; replace every 15,000 km.',
+    k75SparkReplaceFrequency: 'Every 15,000 km.',
+    k75ValveClearanceFrequency: 'Every 7,500 km; first check at 1,000 km.',
+    k75TransmissionOilFrequency: 'Every 15,000 km or at least annually; first service at 1,000 km.',
+    k75ForkOilFrequency: 'First service at 1,000 km, then every 15,000 km.',
+    k75BrakeFluidFrequency: 'Every 2 years. DOT 4; capacity is not stated by the source.',
+    k75BrakePadsFrequency: 'Check every 7,500 km.',
+    k75BrakeShoesFrequency: 'Check every 7,500 km; applies to rear drum-brake configuration.',
+    k75SteeringFrequency: 'First check at 1,000 km, then every 15,000 km.',
+    k75TyresFrequency: 'Every 1,000 km.',
+    k75AbsFrequency: 'At 1,000 km, every 7,500 km and whenever a wheel is removed; only if ABS is fitted.',
+    k75ScheduleSource: 'Project-priority source: Moto Técnica, BMW K75 1986–1991 study, No. 14 (1996), maintenance table p. 26. The magazine is not official BMW AG documentation.',
+    k75ScheduleApplicability: 'Applies to the K75 maintenance table; engine and fluid values are shared by K75 variants. Brake, ABS and fork checks depend on equipment. The plan does not assume service history.',
+    k100ScheduleSource: 'The K-Models schedule is a generic secondary source; no verified maintenance table for this K100 variant is available here.',
+    k100ScheduleApplicability: 'Displayed K100 fluid data is limited to 2-valve engines covered by Haynes 1988. No extrapolation to K100 4V, K1 or K1100.',
+    k75EngineGroup: 'K75 · three-cylinder engine shared by K75 C, S and RT',
+    k100EngineGroup: 'K100 · 2-valve engine covered by Haynes 1988',
+    unverifiedEngineGroup: 'Applicable engine family not yet identified',
     dueKm: 'Due at (km)', deadline: 'Due date', createReminder: 'Create reminder',
     upcomingEyebrow: 'ALERTS / 08', reminderDisclaimer: 'A reminder is due when either its date or mileage is reached, whichever comes first. Unknown current mileage is not estimated.',
     createReminderName: 'Enter an operation.', chooseReminderLimit: 'Set a date or mileage.',
@@ -234,13 +365,15 @@ const TEXT = {
     completed: 'COMPLETED', overdue: 'OVERDUE', pending: 'PENDING', markDone: 'Done', reactivate: 'Reactivate',
     noPending: 'No pending reminders.', manualEyebrow: 'WORKSHOP DATA / 09',
     manualIntro: 'This screen shows a single sheet for the active garage model. Change the motorcycle model or year in its details.',
-    sourceStatus: 'Source status',     libraryNote: 'The K-Models schedule and 2019 personal guide are secondary sources and disagree on some intervals. Neither confirms exact applicability to this 1987 European K75 S. BMW capacities and specifications remain unconfirmed; available torque values come only from an unofficial K75/K100 table.',
+    sourceStatus: 'Source status', libraryNote: 'For K75, Moto Técnica (an independent technical magazine, not official BMW AG) is prioritized and cross-checked with Haynes 1988. K100 data is limited to 2-valve engines covered by Haynes 1988. No data is extrapolated to K100 4V, K1 or K1100.',
     technicalSheet: 'Vehicle details', applicability: 'Applicability', unknown: 'Not yet verified',
     manufactureYears: 'Manufacture year', europeanBase: 'European market as baseline',
-    engine: 'Engine', displacement: 'Displacement', power: 'Power', cooling: 'Cooling',
+    engine: 'Engine', engineFamily: 'Engine family', displacement: 'Displacement', power: 'Power', cooling: 'Cooling',
     maintenance: 'Maintenance intervals', fluids: 'Fluids and capacities',
-    maintenanceSource: 'Supplied K-Models secondary schedule: generic intervals for several K series. The personal dws guide (2019) recommends 6,000 mi (9,656 km) with conventional oil or 10,000 mi (16,093 km) with synthetic oil; for the fuel filter, annually or at 10,000 mi (16,093 km).',
-    maintenanceApplicability: 'The schedule lists 12,000/24,000 mi (19,312/38,624 km) for the fuel filter depending on fuel quality; gearbox, final-drive and fork intervals also differ. The plan uses only the secondary schedule. BMW has not confirmed these intervals for this 1987 European K75 S.',
+    maintenancePendingTitle: 'Intervals pending',
+    maintenancePendingNote: 'Intervals are not shown without an applicable, cross-checked source for this model/year.',
+    maintenanceSource: 'Supplied K-Models schedule, a generic secondary source for several K series. Personal dws recommendations (2019) are not treated as BMW intervals.',
+    maintenanceApplicability: 'The generic schedule does not confirm exact model, year or market applicability. The K75 table uses Moto Técnica intervals in km; other intervals remain secondary or pending.',
     torque: 'Tightening torque', oem: 'OEM references', oemNote: 'External catalog linked; fitment and supersessions require validation by variant/VIN.',
     pendingValue: 'Awaiting applicable BMW source', pendingOem: 'Awaiting validation by variant and part number',
     buildDate: 'Manufacture date', firstRegistration: 'First registration', abs: 'ABS',
@@ -249,26 +382,57 @@ const TEXT = {
     engineOil: 'Engine oil', coolant: 'Coolant', brakeFluid: 'Brake fluid',
     gearboxFluid: 'Gearbox oil', finalDriveFluid: 'Final drive oil', forkOil: 'Fork oil',
     sourcePending: 'Awaiting confirmed source and applicability',
-    fluidUnknownTypeCapacity: 'BMW specification and capacity for this variant: awaiting confirmation.',
-    fluidSource: 'Secondary source: K-Models schedule supplied by the owner.',
-    fluidPersonalGuide: 'Cross-reference: personal guide EN - K_Bike_General_Maintenance_V1.3 (dws, 2019); not BMW documentation.',
+    fluidUnknownTypeCapacity: 'Quantity or specification for this variant: awaiting an applicable source.',
     secondarySourceLabel: 'Secondary source',
-    fluidApplicability: 'Exact variant, year and market applicability is unconfirmed.',
-    engineOilGuidance: 'The schedule says to change the oil and filter warm; for short trips or below 32 °F it lists 3 months or 1,800 mi (2,897 km). It does not set a normal interval. The 2019 personal guide suggests 6,000 mi (9,656 km) for conventional oil or 10,000 mi (16,093 km) for synthetic oil: secondary advice, not BMW.',
-    coolantGuidance: 'The schedule lists replacement every 2 years. The personal guide suggests a 40/60 mix with distilled water, but does not confirm a BMW-approved product or capacity; verify compatibility before using that mix.',
-    brakeFluidGuidance: 'The schedule lists DOT 4 and annual replacement. Capacity is not stated; verify the applicable fluid in BMW documentation.',
-    gearboxFluidGuidance: 'The schedule says to change at operating temperature but gives no type, capacity or interval. The 2019 personal guide suggests 20,000 mi (32,187 km) for the gearbox and distinguishes 2-valve K75/K100 from K100 4V/K1100; this is not a BMW-confirmed interval.',
-    finalDriveFluidGuidance: 'The schedule says to change at operating temperature but gives no type, capacity or interval. The 2019 personal guide suggests 20,000 mi (32,187 km) and distinguishes 2-valve K75/K100 from K100 4V/K1100; this is not a BMW-confirmed interval.',
-    forkOilGuidance: 'The schedule says to change at operating temperature but gives no type, capacity or interval. The 2019 personal guide suggests annual replacement, not a confirmed BMW specification.',
-    fluidSourceDocument: 'Maintenance schedule · English ↗',
-    torqueNote: 'Values are from a secondary table titled K75/100 Specs, not a BMW source. The table does not confirm year, market, variant or installation conditions; verify each value against applicable BMW documentation before use.',
-    torqueSource: 'Secondary source: EN - K75-K100_Torque_Specs.pdf, one-page table.',
-    torqueApplicability: 'The table combines K75/K100; except for the entry explicitly labelled K75, it does not separate model, year or market. BMW confirmation is absent.',
-    clutchTorqueCaution: 'The table lists 140 Nm for the K75 clutch nut. Its procedural note explicitly concerns the K100 and must not be transferred to the K75.',
-    torqueOilDrain: 'Engine oil drain plug', torqueOilFilter: 'Oil filter cover',
-    torqueGearDrain: 'Gearbox drain plug', torqueGearFill: 'Gearbox fill plug',
-    torqueFinalDriveDrain: 'Final drive drain plug', torqueFinalDriveFill: 'Final drive fill plug',
-    torqueSparkPlug: 'Spark plug', torqueClutchNut: 'K75 clutch nut',
+    torqueNote: 'Moto Técnica gives these values in m.daN; they are displayed in Nm after multiplying by 10. The magazine is the project-priority reference, not official BMW AG documentation. Values without sufficient applicability are omitted.',
+    torqueSource: 'Project-priority source: Moto Técnica, BMW K75 1986–1991, No. 14 (1996), pp. 49, 54, 74, 89 and 91.',
+    torqueApplicability: 'Values apply to the component identified in the K75 magazine; confirm fitment, variant and procedure in the applicable manual before working.',
+    torqueSecondarySource: 'Secondary reference: EN - K75-K100_Torque_Specs.pdf. One-page table with no documented author, year or variant.',
+    torqueSecondaryApplicability: 'Shown only as a provisional K100 2V reference; not a BMW specification and not extrapolated to K100 4V, K1 or K1100.',
+    torqueHead: 'Cylinder head tightening (2 stages)',
+    torqueCamCrank: 'Crankshaft front bolt',
+    torqueCamTensioner: 'Timing chain tensioner bolt',
+    torqueCamSupport: 'Camshaft bearing-cap bolts',
+    torqueCamSprocket: 'Camshaft sprocket bolts',
+    torqueCamCover: 'Camshaft cover bolts',
+    torqueOilDrain: 'Engine oil drain plug',
+    torqueOilFilter: 'Oil filter cover',
+    torqueGearDrain: 'Gearbox drain plug',
+    torqueGearFill: 'Gearbox fill plug',
+    torqueSparkPlug: 'Spark plug',
+    torqueClutchBolts: 'Clutch fasteners',
+    torqueForkUpper: 'Fork clamp · upper triple clamp',
+    torqueForkLower: 'Fork clamp · lower triple clamp',
+    torqueSteeringStem: 'Steering stem fastener',
+    torqueFrontAxleNut: 'Front wheel axle nut',
+    torqueFrontAxlePinch: 'Front wheel axle pinch bolt',
+    torqueBrakeCaliper: 'Brake caliper fasteners',
+    torqueRearShock: 'Rear shock fasteners',
+    torqueFinalDriveSwingarm: 'Final drive to swingarm fasteners',
+    torqueFinalDriveDrain: 'Final drive drain plug',
+    torqueFinalDriveFill: 'Final drive fill plug',
+    torqueWheelBolts: 'Wheel mounting bolts',
+    torqueSourceP49: 'Moto Técnica, p. 49',
+    torqueSourceP54: 'Moto Técnica, p. 54',
+    torqueSourceP74: 'Moto Técnica, p. 74',
+    torqueSourceP89: 'Moto Técnica, p. 89',
+    torqueSourceP91: 'Moto Técnica, p. 91',
+    torqueSourceChart: 'Secondary K75/100 table',
+    fluidApplicabilityK75: 'K75 1986–1991; engine values are shared by K75 C/S/RT variants. Fork values depend on suspension.',
+    fluidApplicabilityK100: 'Haynes 1988, 2-valve K100 engines; exact market and variant must be confirmed. Do not extrapolate to 4V.',
+    fluidApplicabilityK75Fork: 'K75 S with Sport suspension; use the corresponding value for K75 C and other fork configurations.',
+    fluidPendingForVariant: 'Not extrapolated to this family, year or configuration; data pending.',
+    fluidEngineOilK75: 'Multigrade API SE/SF oil; viscosity depends on ambient temperature according to the source table.',
+    fluidCoolantK75: 'Total capacity. The magazine specifies coolant with an inhibitor compatible with light alloys, without naming a specific brand or chemistry.',
+    fluidBrakeK75: 'DOT 4. The source does not state capacity.',
+    fluidGearboxK75: 'Hypoid API GL-5 oil; SAE 90 above +5 °C and SAE 80 below +5 °C.',
+    fluidFinalDriveK75: 'Hypoid API GL-5 oil; SAE 80 or SAE 90 depending on outside temperature.',
+    fluidForkK75: 'Hydraulic fork oil; the magazine lists several products and does not specify a single viscosity.',
+    fluidEngineOilK100: 'Haynes specifies HD-grade API SE/SF engine oil, with filter.',
+    fluidGearboxK100: 'Haynes specifies hypoid API GL-5 (or MIL-L-2105 B/C); SAE 90 above +5 °C, SAE 80 below +5 °C, or SAE 80W-90.',
+    fluidFinalDriveK100: 'Hypoid API GL-5 oil, per Haynes 1988.',
+    fluidBrakeK100: 'DOT 4; Haynes does not state capacity.',
+    fluidForkK100: 'Quantity per fork leg for the fork configuration described in Haynes 1988; confirm the installed setup.',
     manualLanguage: 'Language / market', documentSource: 'Document supplied by the owner',
     openPdf: 'Open PDF ↗', downloadPdf: 'Download PDF ↓',
     userManualSpanish: 'Instructions · Spanish', maintenanceSchedule: 'Maintenance schedule · English',
@@ -382,6 +546,7 @@ function applyLanguage() {
   });
   $('.bottom-nav').setAttribute('aria-label', t('mainNavigation'));
   $('#languageSelect').value = data.language;
+  updateBasePlanControls();
   renderModelLibrary();
 }
 
@@ -505,10 +670,25 @@ function renderReminders() {
   updateBasePlanControls();
 }
 
+function isK75Model(vehicle = data.vehicle) {
+  return /^BMW K75(?:\s|$)/i.test(String(vehicle.model || '').trim());
+}
+
+function isK75ReferenceCovered(vehicle = data.vehicle) {
+  const year = Number(vehicle.year);
+  return isK75Model(vehicle) && year >= 1986 && year <= 1991;
+}
+
+function isK100TwoValveModel(vehicle = data.vehicle) {
+  const model = String(vehicle.model || '').trim();
+  const year = Number(vehicle.year);
+  return /^BMW K100(?:\s|$)/i.test(model) && year >= 1983 && year <= 1988;
+}
+
 function getBasePlanKey(vehicle = data.vehicle) {
   const model = String(vehicle.model || '').trim().toUpperCase();
-  if (!/^BMW K(?:75|100|1100|1)(?:\s|$)/.test(model)) return '';
-  return `k-models-schedule-v1:${model}:${vehicle.year || ''}:${vehicle.market || ''}`;
+  if (!isK75ReferenceCovered(vehicle)) return '';
+  return `k75-moto-tecnica-v1:${model}:${vehicle.year || ''}:${vehicle.market || ''}`;
 }
 
 function updateBasePlanControls() {
@@ -521,9 +701,19 @@ function updateBasePlanControls() {
     Number.isSafeInteger(Number(mileage)) && Number(mileage) >= 0;
   const exists = planKey && data.reminders.some(reminder => reminder.planKey === planKey);
   button.disabled = !planKey || !hasMileage || Boolean(exists);
+  const k75Plan = isK75ReferenceCovered();
+  const warning = $('.warning-note');
+  if (warning) {
+    const label = $('b', warning);
+    const message = $('span', warning);
+    if (label) label.textContent = t(k75Plan ? 'k75PlanTitle' : 'pendingPlanTitle');
+    const messageKey = k75Plan ? 'k75ReminderSourceNote' :
+      isK75Model() ? 'k75PendingPlanNote' : 'unverifiedScheduleNote';
+    if (message) message.textContent = t(messageKey);
+  }
   status.textContent = !planKey ? t('basePlanUnsupported') :
     !hasMileage ? t('basePlanNeedsMileage') :
-      exists ? t('basePlanAlreadyExists') : t('basePlanReady');
+      exists ? t('basePlanAlreadyExists') : t(k75Plan ? 'k75BasePlanReady' : 'basePlanReady');
 }
 
 function addCalendarMonths(dateString, months) {
@@ -549,50 +739,51 @@ function generateBasePlan() {
   }
 
   const today = localDateString();
-  const milesToKm = miles => Math.round(miles * 1.609344);
-  const generated = [];
-  const applicability = `${t('basePlanSource')} ${t('basePlanApplicability')} ${t('basePlanMileageBasis')} ${formatNumber(currentKm)} km.`;
-  const addReminder = ({ title, miles, months, note }) => {
-    const intervalKm = miles ? milesToKm(miles) : 0;
-    const interval = miles
-      ? (data.language === 'en'
-        ? `Interval: ${miles.toLocaleString('en-US')} mi (${formatNumber(intervalKm)} km).`
-        : `Intervalo: ${miles.toLocaleString('es-ES')} mi (${formatNumber(intervalKm)} km).`)
-      : (data.language === 'en'
-        ? `Date calculated ${months} month(s) from plan creation (${today}); it does not confirm the last service.`
-        : `Fecha calculada a ${months} mes(es) desde la creación del plan (${today}); no confirma el último servicio.`);
-    generated.push({
-      id: crypto.randomUUID(),
-      title: t(title),
-      km: miles ? currentKm + intervalKm : '',
-      date: months ? addCalendarMonths(today, months) : '',
-      notes: `${note ? `${t(note)} ` : ''}${interval} ${applicability}`,
-      done: false,
-      planKey
-    });
-  };
+  if (isK75ReferenceCovered()) {
+    const generated = [];
+    const applicability = `${t('k75ScheduleSource')} ${t('k75ScheduleApplicability')} ${t('basePlanMileageBasis')} ${formatNumber(currentKm)} km.`;
+    const addK75Reminder = ({ title, frequency, km, months }) => {
+      generated.push({
+        id: crypto.randomUUID(),
+        title: t(title),
+        km: km ? currentKm + km : '',
+        date: months ? addCalendarMonths(today, months) : '',
+        notes: `${t(frequency)} ${applicability}`,
+        done: false,
+        planKey
+      });
+    };
 
-  addReminder({ title: 'planGeneralService', miles: 4000, note: 'planServiceRange' });
-  addReminder({ title: 'planInspection', miles: 8000, note: 'planInspectionRange' });
-  addReminder({ title: 'planAnnualService', months: 12 });
-  addReminder({ title: 'planBrakeFluid', months: 12 });
-  addReminder({ title: 'planCoolant', months: 24 });
-  addReminder({ title: 'planFuelFilter', miles: 12000, note: 'planPoorFuel' });
-  addReminder({ title: 'planBearings', miles: 25000, note: 'planBearingsNote' });
-  addReminder({ title: 'planChainGuide', miles: 36000, note: 'planChainNote' });
-  addReminder({ title: 'planEngineOilSevere', miles: 1800, months: 3, note: 'planColdOilNote' });
-  addReminder({ title: 'planAirFilterDust', miles: 6000, note: 'planDustNote' });
+    addK75Reminder({ title: 'planK75OilLevel', frequency: 'k75OilLevelFrequency', km: 500 });
+    addK75Reminder({ title: 'planK75OilChange', frequency: 'k75OilChangeFrequency', km: 7500, months: 6 });
+    addK75Reminder({ title: 'planK75OilFilter', frequency: 'k75OilFilterFrequency', km: 15000 });
+    addK75Reminder({ title: 'planK75CoolantCheck', frequency: 'k75CoolantCheckFrequency', km: 7500 });
+    addK75Reminder({ title: 'planK75CoolantChange', frequency: 'k75CoolantChangeFrequency', months: 24 });
+    addK75Reminder({ title: 'planK75AirFilter', frequency: 'k75AirFilterFrequency', km: 15000 });
+    addK75Reminder({ title: 'planK75FuelFilter', frequency: 'k75FuelFilterFrequency', km: 30000 });
+    addK75Reminder({ title: 'planK75SparkCheck', frequency: 'k75SparkCheckFrequency', km: 7500 });
+    addK75Reminder({ title: 'planK75SparkReplace', frequency: 'k75SparkReplaceFrequency', km: 15000 });
+    addK75Reminder({ title: 'planK75ValveClearance', frequency: 'k75ValveClearanceFrequency', km: 7500 });
+    addK75Reminder({ title: 'planK75TransmissionOil', frequency: 'k75TransmissionOilFrequency', km: 15000, months: 12 });
+    addK75Reminder({ title: 'planK75ForkOil', frequency: 'k75ForkOilFrequency', km: 15000 });
+    addK75Reminder({ title: 'planK75BrakeFluid', frequency: 'k75BrakeFluidFrequency', months: 24 });
+    addK75Reminder({ title: 'planK75BrakePads', frequency: 'k75BrakePadsFrequency', km: 7500 });
+    addK75Reminder({ title: 'planK75Steering', frequency: 'k75SteeringFrequency', km: 15000 });
+    addK75Reminder({ title: 'planK75Tyres', frequency: 'k75TyresFrequency', km: 1000 });
+    if (data.vehicle.abs === 'yes') {
+      addK75Reminder({ title: 'planK75Abs', frequency: 'k75AbsFrequency', km: 7500 });
+    }
+    if (/^BMW K75 C$/i.test(String(data.vehicle.model || '').trim()) &&
+      Number(data.vehicle.year) >= 1987 && Number(data.vehicle.year) <= 1989) {
+      addK75Reminder({ title: 'planK75BrakeShoes', frequency: 'k75BrakeShoesFrequency', km: 7500 });
+    }
 
-  const buildYear = Number(data.vehicle.year);
-  if (buildYear >= 1980 && buildYear < 1990) {
-    addReminder({ title: 'planSplines', months: 12, note: 'planSplineNote' });
-  } else if (buildYear >= 1990) {
-    addReminder({ title: 'planSplines', miles: 40000, note: 'planSplineNote' });
+    data.reminders.push(...generated);
+    persist();
+    toast(t('basePlanCreated'));
+    return;
   }
 
-  data.reminders.push(...generated);
-  persist();
-  toast(t('basePlanCreated'));
 }
 
 function renderVehicleForm() {
@@ -605,35 +796,194 @@ function renderVehicleForm() {
 
 function renderModelLibrary() {
   const vehicle = data.vehicle;
+  const localized = (es, en) => data.language === 'en' ? en : es;
+  const year = Number(vehicle.year);
+  const isK75 = isK75Model(vehicle);
+  const isK100 = /^BMW K100(?:\s|$)/i.test(String(vehicle.model || '').trim());
+  const isK100TwoValve = isK100TwoValveModel(vehicle);
   const detail = (label, value) => `<div><span>${t(label)}</span><strong>${escapeHtml(value || t('pendingIdentification'))}</strong></div>`;
-  const pending = label => detail(label, t('sourcePending'));
-  const fluids = [
-    { key: 'engineOil', guidance: 'engineOilGuidance' },
-    { key: 'coolant', guidance: 'coolantGuidance' },
-    { key: 'brakeFluid', guidance: 'brakeFluidGuidance' },
-    { key: 'gearboxFluid', guidance: 'gearboxFluidGuidance' },
-    { key: 'finalDriveFluid', guidance: 'finalDriveFluidGuidance' },
-    { key: 'forkOil', guidance: 'forkOilGuidance' }
+  const sourceFor = (key, source) => ({ key, ...source });
+  let family = isK75Model(vehicle) ? t('k75EngineGroup') : t('unverifiedEngineGroup');
+  let fluids = [];
+
+  if (isK75ReferenceCovered(vehicle)) {
+    const model = String(vehicle.model || '');
+    const sportFork = /\b(?:S|RT)\b/i.test(model) || year >= 1990;
+    const earlyK75C = /\bC\b/i.test(model) && year >= 1987 && year <= 1989;
+    const forkValue = sportFork
+      ? '280 ± 10 cm³ / ' + localized('botella', 'fork leg')
+      : earlyK75C || (year >= 1986 && year <= 1989)
+        ? '330 ± 10 cm³ / ' + localized('botella', 'fork leg')
+        : t('fluidUnknownTypeCapacity');
+    const k75Applicability = t('fluidApplicabilityK75');
+    const motoSource = page => `Moto Técnica, BMW K75 1986–1991, n.º 14 (1996), p. ${page}.`;
+    fluids = [
+      sourceFor('engineOil', {
+        value: localized('3,50 L sin filtro · 3,75 L con filtro', '3.50 L without filter · 3.75 L with filter'),
+        guidance: t('fluidEngineOilK75'),
+        source: `${motoSource(7)} ${localized('Haynes 1988, p. 26, confirma 3,75 L con filtro.', 'Haynes 1988, p. 26, confirms 3.75 L with filter.')}`,
+        applicability: k75Applicability
+      }),
+      sourceFor('coolant', {
+        value: localized('2,9 L total', '2.9 L total'),
+        guidance: `${t('fluidCoolantK75')} ${localized('El procedimiento describe 2,5 L en el circuito y unos 0,4 L adicionales si se vacía el vaso de expansión.', 'The procedure describes 2.5 L in the circuit plus about 0.4 L if the expansion tank is drained.')}`,
+        source: `${motoSource('7–8')}`,
+        applicability: k75Applicability
+      }),
+      sourceFor('brakeFluid', {
+        value: localized('DOT 4 · cantidad no indicada', 'DOT 4 · capacity not stated'),
+        guidance: t('fluidBrakeK75'),
+        source: motoSource(9),
+        applicability: k75Applicability
+      }),
+      sourceFor('gearboxFluid', {
+        value: localized('0,85 L', '0.85 L'),
+        guidance: t('fluidGearboxK75'),
+        source: `${motoSource(7)} ${localized('Haynes 1988, p. 26, indica 0,85 ± 0,05 L. El manual Rider’s 1994 (EE. UU.), p. 73, cita 0,8 L; no se aplica a esta K75 europea de 1987.', 'Haynes 1988, p. 26, states 0.85 ± 0.05 L. The 1994 US Rider’s Manual, p. 73, lists 0.8 L; it is not applied to this 1987 European K75.')}`,
+        applicability: k75Applicability
+      }),
+      sourceFor('finalDriveFluid', {
+        value: localized('0,26 L', '0.26 L'),
+        guidance: t('fluidFinalDriveK75'),
+        source: `${motoSource(8)} ${localized('Haynes 1988, p. 26, confirma 0,26 L. El manual Rider’s 1994 (EE. UU.), p. 73, cita 0,25 L; no se aplica a esta K75 europea de 1987.', 'Haynes 1988, p. 26, confirms 0.26 L. The 1994 US Rider’s Manual, p. 73, lists 0.25 L; it is not applied to this 1987 European K75.')}`,
+        applicability: k75Applicability
+      }),
+      sourceFor('forkOil', {
+        value: forkValue,
+        guidance: t('fluidForkK75'),
+        source: `${motoSource(9)} Haynes 1988, p. 26.`,
+        applicability: t('fluidApplicabilityK75Fork')
+      })
+    ];
+  } else if (isK100TwoValve) {
+    family = t('k100EngineGroup');
+    const model = String(vehicle.model || '');
+    const sportFork = /\b(?:RS|RT|LT)\b/i.test(model);
+    fluids = [
+      sourceFor('engineOil', {
+        value: localized('3,75 L con filtro', '3.75 L with filter'),
+        guidance: t('fluidEngineOilK100'),
+        source: 'Haynes BMW K75/K100 1988, p. 26.',
+        applicability: t('fluidApplicabilityK100')
+      }),
+      sourceFor('coolant', {
+        value: t('fluidUnknownTypeCapacity'),
+        guidance: t('fluidPendingForVariant'),
+        source: t('sourcePending'),
+        applicability: t('fluidApplicabilityK100')
+      }),
+      sourceFor('brakeFluid', {
+        value: localized('DOT 4 · cantidad no indicada', 'DOT 4 · capacity not stated'),
+        guidance: t('fluidBrakeK100'),
+        source: 'Haynes BMW K75/K100 1988, p. 26.',
+        applicability: t('fluidApplicabilityK100')
+      }),
+      sourceFor('gearboxFluid', {
+        value: localized('0,85 ± 0,05 L', '0.85 ± 0.05 L'),
+        guidance: t('fluidGearboxK100'),
+        source: 'Haynes BMW K75/K100 1988, p. 26.',
+        applicability: t('fluidApplicabilityK100')
+      }),
+      sourceFor('finalDriveFluid', {
+        value: localized('0,26 L', '0.26 L'),
+        guidance: t('fluidFinalDriveK100'),
+        source: 'Haynes BMW K75/K100 1988, p. 26.',
+        applicability: t('fluidApplicabilityK100')
+      }),
+      sourceFor('forkOil', {
+        value: sportFork
+          ? `360 ± 10 cm³ / ${localized('brazo', 'fork leg')}`
+          : `330 ± 10 cm³ / ${localized('brazo', 'fork leg')}`,
+        guidance: t('fluidForkK100'),
+        source: 'Haynes BMW K75/K100 1988, p. 26.',
+        applicability: t('fluidApplicabilityK100')
+      })
+    ];
+  } else {
+    const applicability = isK75 ? t('k75PendingPlanNote') :
+      isK100 ? t('k100ScheduleApplicability') : t('fluidPendingForVariant');
+    fluids = ['engineOil', 'coolant', 'brakeFluid', 'gearboxFluid', 'finalDriveFluid', 'forkOil'].map(key =>
+      sourceFor(key, {
+        value: t('fluidUnknownTypeCapacity'),
+        guidance: t('fluidPendingForVariant'),
+        source: t('sourcePending'),
+        applicability
+      })
+    );
+  }
+
+  const k75Maintenance = [
+    { title: 'planK75OilLevel', note: 'k75OilLevelFrequency' },
+    { title: 'planK75OilChange', note: 'k75OilChangeFrequency' },
+    { title: 'planK75OilFilter', note: 'k75OilFilterFrequency' },
+    { title: 'planK75CoolantCheck', note: 'k75CoolantCheckFrequency' },
+    { title: 'planK75CoolantChange', note: 'k75CoolantChangeFrequency' },
+    { title: 'planK75AirFilter', note: 'k75AirFilterFrequency' },
+    { title: 'planK75FuelFilter', note: 'k75FuelFilterFrequency' },
+    { title: 'planK75SparkCheck', note: 'k75SparkCheckFrequency' },
+    { title: 'planK75SparkReplace', note: 'k75SparkReplaceFrequency' },
+    { title: 'planK75ValveClearance', note: 'k75ValveClearanceFrequency' },
+    { title: 'planK75TransmissionOil', note: 'k75TransmissionOilFrequency' },
+    { title: 'planK75ForkOil', note: 'k75ForkOilFrequency' },
+    { title: 'planK75BrakeFluid', note: 'k75BrakeFluidFrequency' },
+    { title: 'planK75BrakePads', note: 'k75BrakePadsFrequency' },
+    { title: 'planK75Steering', note: 'k75SteeringFrequency' },
+    { title: 'planK75Tyres', note: 'k75TyresFrequency' }
   ];
-  const maintenance = [
-    { title: 'planGeneralService', note: 'planServiceRange' },
-    { title: 'planInspection', note: 'planInspectionRange' },
-    { title: 'planAnnualService', note: 'planAnnualServiceNote' },
-    { title: 'planFuelFilter', note: 'planFuelFilterInterval' },
-    { title: 'planBearings', note: 'planBearingsNote' },
-    { title: 'planChainGuide', note: 'planChainNote' },
-    { title: 'planSplines', note: 'planSplineNote' }
+  if (vehicle.abs === 'yes') k75Maintenance.push({ title: 'planK75Abs', note: 'k75AbsFrequency' });
+  if (/^BMW K75 C$/i.test(String(vehicle.model || '').trim()) &&
+    year >= 1987 && year <= 1989) {
+    k75Maintenance.push({ title: 'planK75BrakeShoes', note: 'k75BrakeShoesFrequency' });
+  }
+  const hasVerifiedMaintenance = isK75ReferenceCovered(vehicle);
+  const maintenance = hasVerifiedMaintenance ? k75Maintenance :
+    [{ title: 'maintenancePendingTitle', note: 'maintenancePendingNote' }];
+  const maintenanceSource = hasVerifiedMaintenance ? t('k75ScheduleSource') :
+    isK75 ? t('k75PendingPlanNote') : isK100 ? t('k100ScheduleSource') : t('sourcePending');
+  const maintenanceApplicability = hasVerifiedMaintenance ? t('k75ScheduleApplicability') :
+    isK75 ? t('fluidPendingForVariant') : isK100 ? t('k100ScheduleApplicability') : t('fluidPendingForVariant');
+
+  const k75Torques = [
+    { title: 'torqueHead', value: '30 ± 4 Nm → 45 ± 5 Nm', source: 'torqueSourceP54' },
+    { title: 'torqueCamCrank', value: '50 ± 6 Nm', source: 'torqueSourceP49' },
+    { title: 'torqueCamTensioner', value: '9 ± 1 Nm', source: 'torqueSourceP49' },
+    { title: 'torqueCamSupport', value: '9 ± 1 Nm', source: 'torqueSourceP49' },
+    { title: 'torqueCamSprocket', value: '54 ± 6 Nm', source: 'torqueSourceP49' },
+    { title: 'torqueCamCover', value: '8 ± 1 Nm', source: 'torqueSourceP49' },
+    { title: 'torqueForkUpper', value: '22 ± 1 Nm', source: 'torqueSourceP89' },
+    { title: 'torqueForkLower', value: '43 ± 3 Nm', source: 'torqueSourceP89' },
+    { title: 'torqueSteeringStem', value: '74 ± 5 Nm', source: 'torqueSourceP89' },
+    { title: 'torqueFrontAxleNut', value: '33 ± 4 Nm', source: 'torqueSourceP89' },
+    { title: 'torqueFrontAxlePinch', value: '14 ± 2 Nm', source: 'torqueSourceP89' },
+    { title: 'torqueBrakeCaliper', value: '32 ± 2 Nm', source: 'torqueSourceP89' },
+    { title: 'torqueFinalDriveSwingarm', value: '40 ± 3 Nm', source: 'torqueSourceP74' },
+    { title: 'torqueFinalDriveDrain', value: '25 ± 3 Nm', source: 'torqueSourceP74' },
+    { title: 'torqueFinalDriveFill', value: '20 ± 2 Nm', source: 'torqueSourceP74' },
+    { title: 'torqueRearShock', value: '51 ± 6 Nm', source: 'torqueSourceP91' },
+    { title: 'torqueWheelBolts', value: '105 ± 4 Nm', source: 'torqueSourceP91' }
   ];
-  const torques = [
-    { title: 'torqueOilDrain', value: '32 Nm · 23.6 ft·lb' },
-    { title: 'torqueOilFilter', value: '8 Nm · 5.9 ft·lb' },
-    { title: 'torqueGearDrain', value: '20 Nm · 14.8 ft·lb' },
-    { title: 'torqueGearFill', value: '23 Nm · 17.0 ft·lb' },
-    { title: 'torqueFinalDriveDrain', value: '25 Nm · 18.4 ft·lb' },
-    { title: 'torqueFinalDriveFill', value: '20 Nm · 14.8 ft·lb' },
-    { title: 'torqueSparkPlug', value: '20 Nm · 14.8 ft·lb' },
-    { title: 'torqueClutchNut', value: '140 Nm · 103.3 ft·lb' }
-  ];
+  const k100Torques = [
+    { title: 'torqueOilDrain', value: '32 Nm' },
+    { title: 'torqueOilFilter', value: '8 Nm' },
+    { title: 'torqueGearDrain', value: '20 Nm' },
+    { title: 'torqueGearFill', value: '23 Nm' },
+    { title: 'torqueFinalDriveDrain', value: '25 Nm' },
+    { title: 'torqueFinalDriveFill', value: '20 Nm' },
+    { title: 'torqueSparkPlug', value: '20 Nm' },
+    { title: 'torqueClutchBolts', value: '19 Nm' },
+    { title: 'torqueBrakeCaliper', value: '32 Nm' },
+    { title: 'torqueRearShock', value: '51 Nm' },
+    { title: 'torqueFinalDriveSwingarm', value: '40 Nm' },
+    { title: 'torqueWheelBolts', value: '105 Nm' }
+  ].map(item => ({ ...item, source: 'torqueSourceChart' }));
+  const torques = isK75ReferenceCovered(vehicle) ? k75Torques : isK100TwoValve ? k100Torques : [];
+  const torqueSource = isK75ReferenceCovered(vehicle) ? t('torqueSource') :
+    isK100TwoValve ? t('torqueSecondarySource') : t('sourcePending');
+  const torqueApplicability = isK75ReferenceCovered(vehicle) ? t('torqueApplicability') :
+    isK100TwoValve ? t('torqueSecondaryApplicability') : t('fluidPendingForVariant');
+  const torqueNote = isK100TwoValve
+    ? localized('La tabla secundaria no especifica los rangos de tolerancia ni las condiciones de montaje; verificar cada valor antes de usarlo.', 'The secondary table does not specify tolerances or installation conditions; verify each value before use.')
+    : t('torqueNote');
   const manuals = [
     { title: t('userManualSpanish'), language: 'Español', file: './manuales/instrucciones-es.pdf' },
     { title: t('maintenanceSchedule'), language: 'English', file: './manuales/agenda-mantenimiento-en.pdf' },
@@ -650,6 +1000,7 @@ function renderModelLibrary() {
         ${detail('buildDate', vehicle.buildDate)}
         ${detail('firstRegistration', vehicle.registrationDate)}
         ${detail('engine', vehicle.engine)}
+        ${detail('engineFamily', family)}
         ${detail('abs', vehicle.abs === 'yes' ? t('yes') : vehicle.abs === 'no' ? t('no') : '')}
         ${detail('gearboxCode', vehicle.gearboxCode)}
         ${detail('finalDriveCode', vehicle.finalDriveCode)}
@@ -657,7 +1008,7 @@ function renderModelLibrary() {
       <p class="detail-placeholder">${t('profileSource')}</p>
     </details>
     <details>
-      <summary>${t('maintenance')}<span>${t('secondarySourceLabel')}</span></summary>
+      <summary>${t('maintenance')}<span>${hasVerifiedMaintenance ? t('k75PlanTitle') : t('unknown')}</span></summary>
       <div class="fluid-grid">
         ${maintenance.map(item => `
           <article class="fluid-card">
@@ -665,28 +1016,27 @@ function renderModelLibrary() {
             <p>${t(item.note)}</p>
           </article>`).join('')}
       </div>
-      <p class="detail-placeholder">${t('maintenanceSource')}<br>${t('maintenanceApplicability')}</p>
+      <p class="detail-placeholder">${maintenanceSource}<br>${maintenanceApplicability}</p>
     </details>
     <details>
-      <summary>${t('fluids')}<span>${t('secondarySourceLabel')}</span></summary>
+      <summary>${t('fluids')}<span>${isK75ReferenceCovered(vehicle) ? t('k75PlanTitle') : isK100TwoValve ? t('secondarySourceLabel') : t('unknown')}</span></summary>
       <div class="fluid-grid">
         ${fluids.map(fluid => `
           <article class="fluid-card">
             <h3>${t(fluid.key)}</h3>
-            <strong>${t('fluidUnknownTypeCapacity')}</strong>
-            <p>${t(fluid.guidance)}</p>
-            <p class="fluid-source">${t('fluidSource')}<br>${t('fluidPersonalGuide')}<br>${t('fluidApplicability')}<br>
-              <a href="./manuales/agenda-mantenimiento-en.pdf" target="_blank" rel="noopener">${t('fluidSourceDocument')}</a>
-            </p>
+            <strong>${escapeHtml(fluid.value)}</strong>
+            <p>${escapeHtml(fluid.guidance)}</p>
+            <p class="fluid-source">${escapeHtml(fluid.source)}<br>${escapeHtml(fluid.applicability)}</p>
           </article>`).join('')}
       </div>
     </details>
     <details>
-      <summary>${t('torque')}<span>${t('secondarySourceLabel')}</span></summary>
+      <summary>${t('torque')}<span>${isK75ReferenceCovered(vehicle) ? t('k75PlanTitle') : isK100TwoValve ? t('secondarySourceLabel') : t('unknown')}</span></summary>
       <div class="spec-table torque-table">
-        ${torques.map(torque => `<div><span>${t(torque.title)}</span><strong>${torque.value}</strong></div>`).join('')}
+        ${torques.map(torque => `<div><span>${t(torque.title)}</span><strong>${torque.value}</strong><small>${t(torque.source)}</small></div>`).join('')}
       </div>
-      <p class="detail-placeholder">${t('torqueSource')}<br>${t('torqueApplicability')}<br>${t('clutchTorqueCaution')}<br>${t('torqueNote')}</p>
+      ${torques.length ? '' : `<p class="detail-placeholder">${t('fluidUnknownTypeCapacity')}</p>`}
+      <p class="detail-placeholder">${torqueSource}<br>${torqueApplicability}<br>${torqueNote}</p>
     </details>
     <details>
       <summary>${t('oem')}<span>${t('unknown')}</span></summary>
