@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bmw-k-service-book-v5';
+const CACHE_NAME = 'bmw-k-service-book-v6';
 const APP_ASSETS = [
   './',
   './index.html',
