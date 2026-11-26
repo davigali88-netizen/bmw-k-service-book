@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bmw-k-service-book-v6';
+const CACHE_NAME = 'bmw-k-service-book-v7';
 const APP_ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,8 @@ const APP_ASSETS = [
   './app.js',
   './manifest.webmanifest',
   './icon.svg',
-  './k75s-reference.jpg'
+  './k75s-reference.jpg',
+  './media/bmw-k-series-tribute.mp4'
 ];
 
 self.addEventListener('install', event => {

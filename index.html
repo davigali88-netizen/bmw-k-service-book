@@ -123,8 +123,19 @@
         </div>
       </section>
 
+      <section class="view" id="view-tribute">
+        <div class="page-head"><div class="eyebrow" data-i18n="tributeEyebrow">HOMENAJE SERIE K / 10</div><h1 data-i18n="videoTitle">Vídeo tributo a la BMW K</h1><p data-i18n="videoIntro">Un homenaje audiovisual a la historia de las motocicletas BMW de la serie K.</p></div>
+        <div class="panel tribute-panel">
+          <video class="tribute-video" controls playsinline preload="metadata">
+            <source src="./media/bmw-k-series-tribute.mp4" type="video/mp4">
+            <span data-i18n="videoNotAvailable">Tu navegador no puede reproducir este archivo de vídeo.</span>
+          </video>
+          <p class="video-credit" data-i18n="videoCredit">Vídeo aportado por el usuario. La actualización incluye el archivo para reproducirlo sin conexión.</p>
+        </div>
+      </section>
+
       <section class="view" id="view-settings">
-        <div class="page-head"><div class="eyebrow" data-i18n="settingsEyebrow">FICHA DEL GARAJE / 10</div><h1 data-i18n="vehicleSheet">Ficha de la moto</h1><p data-i18n="localDataDescription">Datos personales guardados localmente en este dispositivo.</p></div>
+        <div class="page-head"><div class="eyebrow" data-i18n="settingsEyebrow">FICHA DEL GARAJE / 11</div><h1 data-i18n="vehicleSheet">Ficha de la moto</h1><p data-i18n="localDataDescription">Datos personales guardados localmente en este dispositivo.</p></div>
         <form id="vehicleForm" class="panel form-grid">
           <label><span data-i18n="model">Modelo</span><select name="model"><option>BMW K75 C</option><option>BMW K75 S</option><option>BMW K75 RT</option><option>BMW K100</option><option>BMW K100 RS</option><option>BMW K100 RT</option><option>BMW K100 LT</option><option>BMW K1</option><option>BMW K1100 RS</option><option>BMW K1100 LT</option></select></label>
           <label><span data-i18n="buildYear">Año de fabricación</span><input name="year" type="number" min="1980" max="1995" inputmode="numeric"></label>
@@ -152,6 +163,7 @@
     <button class="nav-item" type="button" data-view="service"><span>＋</span><b data-i18n="serviceNav">Historial</b></button>
     <button class="nav-item" type="button" data-view="reminders"><span>◷</span><b data-i18n="alertsNav">Avisos</b></button>
     <button class="nav-item" type="button" data-view="manual"><span>⌁</span><b data-i18n="manualNav">Fichas</b></button>
+    <button class="nav-item" type="button" data-view="tribute"><span>▶</span><b data-i18n="videoNav">Vídeo</b></button>
   </nav>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./app.js" defer></script>
