@@ -16,7 +16,7 @@ The K75 base plan uses the *Moto Técnica* interval table in kilometres, with ca
 
 For 1983–1988 K100 2-valve models, Haynes 1988 provides secondary fluid references. K100 4-valve, K1 and K1100 capacities/intervals remain pending rather than being inferred from another engine. The one-page K75/K100 torque chart is an unverified secondary reference and is shown only for K100 2-valve models; the K75 torque table uses *Moto Técnica* values converted from m.daN to Nm. Neither source is an official BMW specification.
 
-The interface supports Spanish and English. Records, VIN, and photos remain on this device. JSON backup/restore and CSV service-history export are available in the garage settings. A VIN is optional and is not sent to any service; local decoding is pending a reliable reference table.
+The interface supports Spanish and English. Records, VIN, and photos remain on this device. Service entries can include multiple parts or references with an individual optional cost for each; the entry total appears only when every listed part has a valid cost. JSON backup/restore and CSV service-history export are available in the garage settings. A VIN is optional and is not sent to any service; local decoding is pending a reliable reference table.
 
 The technical library displays one sheet for the active motorcycle in the garage. It includes the three PDFs supplied by the owner, with authorization to publish them confirmed by the user:
 

@@ -46,6 +46,10 @@ const TEXT = {
     serviceEyebrow: 'LIBRO DE SERVICIO / 05', recordIntro: 'Registra trabajos realizados; los datos se guardan en este dispositivo.',
     operation: 'Operación', date: 'Fecha', mileageKm: 'Kilometraje (km)', category: 'Categoría',
     costEuros: 'Coste total (€)', partsReferences: 'Piezas / referencias', notes: 'Notas',
+    itemDescription: 'Pieza / referencia', itemCost: 'Coste (€)', addServiceItem: 'Añadir pieza',
+    removeServiceItem: 'Quitar', serviceTotal: 'Total de la intervención',
+    itemValidation: 'Cada pieza necesita descripción; si indicas un coste, debe ser válido y no negativo.',
+    legacyCostNotice: 'Coste anterior sin desglosar; se conserva si no añades piezas:',
     saveService: 'Guardar intervención', editService: 'Guardar cambios', cancelEdit: 'Cancelar edición',
     historyEyebrow: 'HISTORIAL / 06', history: 'Historial', exportCsv: 'Exportar CSV ↓',
     noServices: 'Todavía no hay intervenciones registradas.', delete: 'Eliminar', edit: 'Editar',
@@ -241,7 +245,7 @@ const TEXT = {
     kmNotEntered: 'Kilometraje no indicado', confirmDelete: '¿Eliminar este recordatorio?',
     mileageLabel: 'km', languageChanged: 'Idioma actualizado', csvDate: 'Fecha',
     csvOperation: 'Operación', csvCategory: 'Categoría', csvParts: 'Piezas / referencias',
-    csvNotes: 'Notas', csvCost: 'Coste (€)', csvStatus: 'Estado',
+    csvNotes: 'Notas', csvCost: 'Coste total (€)', csvItems: 'Piezas (descripción / coste)', csvStatus: 'Estado',
     kilometerValidation: 'El kilometraje debe ser un número válido.'
   },
   en: {
@@ -270,6 +274,10 @@ const TEXT = {
     serviceEyebrow: 'SERVICE RECORD / 05', recordIntro: 'Log work carried out; records are stored on this device.',
     operation: 'Operation', date: 'Date', mileageKm: 'Mileage (km)', category: 'Category',
     costEuros: 'Total cost (€)', partsReferences: 'Parts / references', notes: 'Notes',
+    itemDescription: 'Part / reference', itemCost: 'Cost (€)', addServiceItem: 'Add part',
+    removeServiceItem: 'Remove', serviceTotal: 'Intervention total',
+    itemValidation: 'Each part needs a description; any cost entered must be valid and non-negative.',
+    legacyCostNotice: 'Previous unitemized cost; it is retained if you do not add parts:',
     saveService: 'Save service entry', editService: 'Save changes', cancelEdit: 'Cancel edit',
     historyEyebrow: 'HISTORY / 06', history: 'History', exportCsv: 'Export CSV ↓',
     noServices: 'No service entries yet.', delete: 'Delete', edit: 'Edit',
@@ -465,7 +473,7 @@ const TEXT = {
     kmNotEntered: 'Mileage not entered', confirmDelete: 'Delete this reminder?',
     mileageLabel: 'km', languageChanged: 'Language updated', csvDate: 'Date',
     csvOperation: 'Operation', csvCategory: 'Category', csvParts: 'Parts / references',
-    csvNotes: 'Notes', csvCost: 'Cost (€)', csvStatus: 'Status',
+    csvNotes: 'Notes', csvCost: 'Total cost (€)', csvItems: 'Parts (description / cost)', csvStatus: 'Status',
     kilometerValidation: 'Mileage must be a valid number.'
   }
 };
@@ -525,6 +533,64 @@ function formatCurrency(value) {
   });
 }
 
+function getServiceItems(service) {
+  if (Array.isArray(service.items) && service.items.length) {
+    return service.items.map(item => ({
+      description: String(item.description ?? ''),
+      cost: item.cost === '' || item.cost === null || item.cost === undefined ? '' : Number(item.cost)
+    }));
+  }
+  const description = String(service.parts ?? '');
+  const cost = service.cost === '' || service.cost === null || service.cost === undefined
+    ? '' : Number(service.cost);
+  return description || cost !== '' ? [{ description, cost }] : [];
+}
+
+function serviceTotalCost(service) {
+  if ((!Array.isArray(service.items) || service.items.length === 0) &&
+      (String(service.parts ?? '').trim() || (service.cost !== '' && service.cost !== null && service.cost !== undefined))) {
+    const legacyCost = Number(service.cost);
+    return service.cost !== '' && service.cost !== null && service.cost !== undefined &&
+      Number.isFinite(legacyCost) && legacyCost >= 0 ? legacyCost : '';
+  }
+  const activeItems = getServiceItems(service).filter(item =>
+    item.description.trim() || item.cost !== ''
+  );
+  if (!activeItems.length || activeItems.some(item =>
+    !item.description.trim() || item.cost === '' || !Number.isFinite(item.cost) || item.cost < 0
+  )) return '';
+  return sumItemCosts(activeItems.map(item => item.cost));
+}
+
+function sumItemCosts(costs) {
+  return Math.round((costs.reduce((total, cost) => total + cost, 0) + Number.EPSILON) * 100) / 100;
+}
+
+function renderServiceItems(items = [{ description: '', cost: '' }]) {
+  const host = $('#serviceItems');
+  host.innerHTML = items.map(item => `
+    <div class="service-item-row">
+      <label><span>${t('itemDescription')}</span><input type="text" data-item-description maxlength="240" value="${escapeHtml(item.description)}"></label>
+      <label><span>${t('itemCost')}</span><input type="number" data-item-cost min="0" step="0.01" inputmode="decimal" value="${item.cost === '' ? '' : escapeHtml(item.cost)}"></label>
+      <button class="small-action" type="button" data-remove-service-item>${t('removeServiceItem')}</button>
+    </div>`).join('');
+  updateServiceCostTotal();
+}
+
+function updateServiceCostTotal() {
+  const rows = [...document.querySelectorAll('.service-item-row')].map(row => ({
+    description: row.querySelector('[data-item-description]').value.trim(),
+    cost: row.querySelector('[data-item-cost]').value,
+    valid: row.querySelector('[data-item-cost]').validity.valid
+  })).filter(item => item.description || item.cost !== '' || !item.valid);
+  const complete = rows.length > 0 && rows.every(item =>
+    item.description && item.cost !== '' && item.valid && Number(item.cost) >= 0
+  );
+  $('#serviceCostTotal').textContent = complete
+    ? formatCurrency(sumItemCosts(rows.map(item => Number(item.cost))))
+    : '—';
+}
+
 function localDateString(date = new Date()) {
   const pad = number => String(number).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
@@ -546,8 +612,18 @@ function applyLanguage() {
   });
   $('.bottom-nav').setAttribute('aria-label', t('mainNavigation'));
   $('#languageSelect').value = data.language;
+  updateLegacyCostNotice();
   updateBasePlanControls();
   renderModelLibrary();
+}
+
+function updateLegacyCostNotice(cost) {
+  const notice = $('#legacyCostNote');
+  if (cost !== undefined) notice.dataset.cost = String(cost);
+  const rawCost = notice.dataset.cost || '';
+  const value = Number(rawCost);
+  notice.hidden = rawCost === '' || !Number.isFinite(value);
+  notice.textContent = notice.hidden ? '' : `${t('legacyCostNotice')} ${formatCurrency(value)}`;
 }
 
 function categoryLabel(category) {
@@ -608,15 +684,15 @@ function renderDashboard() {
   const year = String(new Date().getFullYear());
   $('#expenseYear').textContent = year;
   const entries = data.services.filter(service => service.date?.slice(0, 4) === year &&
-    service.cost !== '' && service.cost !== null && service.cost !== undefined);
-  const total = entries.reduce((sum, service) => sum + (Number(service.cost) || 0), 0);
+    serviceTotalCost(service) !== '');
+  const total = entries.reduce((sum, service) => sum + serviceTotalCost(service), 0);
   $('#annualTotal').textContent = formatCurrency(total);
   $('#annualAverage').textContent = entries.length ? formatCurrency(total / entries.length) : '—';
   $('#topCategory').textContent = '—';
   $('#categoryTotal').textContent = '';
   if (entries.length) {
     const sums = new Map();
-    entries.forEach(service => sums.set(service.category, (sums.get(service.category) || 0) + (Number(service.cost) || 0)));
+    entries.forEach(service => sums.set(service.category, (sums.get(service.category) || 0) + serviceTotalCost(service)));
     const [category, amount] = [...sums.entries()].sort((a, b) => b[1] - a[1])[0];
     $('#topCategory').textContent = category;
     $('#categoryTotal').textContent = formatCurrency(amount);
@@ -637,16 +713,22 @@ function renderHistory() {
   const host = $('#historyList');
   const entries = [...data.services].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   host.className = `record-list${entries.length ? '' : ' empty-state'}`;
-  host.innerHTML = entries.length ? entries.map(service => `
-    <article class="record">
+  host.innerHTML = entries.length ? entries.map(service => {
+    const items = getServiceItems(service);
+    const itemMarkup = items.length ? `<ul class="service-item-list">${items.map(item => `
+      <li>${item.description ? escapeHtml(item.description) : '—'}${item.cost !== '' && Number.isFinite(item.cost)
+        ? ` <span>${escapeHtml(formatCurrency(item.cost))}</span>` : ''}</li>`).join('')}</ul>` : '';
+    const total = serviceTotalCost(service);
+    return `<article class="record">
       <div><h3>${escapeHtml(service.title)}</h3>
         <p>${escapeHtml(categoryLabel(service.category))} · ${escapeHtml(service.date)}${service.km !== '' ? ` · ${formatNumber(service.km)} km` : ''}
-        ${service.parts ? `<br>${escapeHtml(service.parts)}` : ''}${service.notes ? `<br>${escapeHtml(service.notes)}` : ''}</p>
+        ${service.notes ? `<br>${escapeHtml(service.notes)}` : ''}</p>${itemMarkup}
       </div>
-      <div class="record-meta">${service.cost !== '' ? escapeHtml(formatCurrency(service.cost)) : '—'}
+      <div class="record-meta">${total !== '' ? `${t('serviceTotal')}: ${escapeHtml(formatCurrency(total))}` : '—'}
         <div class="record-actions"><button class="small-action" type="button" data-edit-service="${escapeHtml(service.id)}">${t('edit')}</button><button class="small-action" type="button" data-delete-service="${escapeHtml(service.id)}">${t('delete')}</button></div>
       </div>
-    </article>`).join('') : t('noServices');
+    </article>`;
+  }).join('') : t('noServices');
 }
 
 function renderReminders() {
@@ -1070,6 +1152,8 @@ function resetServiceForm() {
   const form = $('#serviceForm');
   form.reset();
   form.elements.date.value = new Date().toISOString().slice(0, 10);
+  renderServiceItems();
+  updateLegacyCostNotice('');
   editingServiceId = null;
   $('#serviceSubmit').firstElementChild.textContent = t('saveService');
   $('#cancelServiceEdit').hidden = true;
@@ -1085,8 +1169,14 @@ function downloadFile(filename, content, type) {
 }
 
 function exportCsv() {
-  const headers = [t('csvDate'), t('mileageKm'), t('csvOperation'), t('csvCategory'), t('csvParts'), t('csvNotes'), t('csvCost')];
-  const rows = data.services.map(service => [service.date, service.km, service.title, service.category, service.parts, service.notes, service.cost]);
+  const headers = [t('csvDate'), t('mileageKm'), t('csvOperation'), t('csvCategory'), t('csvItems'), t('csvNotes'), t('csvCost')];
+  const rows = data.services.map(service => {
+    const items = getServiceItems(service).map(item =>
+      [item.description, item.cost !== '' && Number.isFinite(item.cost) ? formatCurrency(item.cost) : '']
+        .filter(Boolean).join(' — ')
+    ).join('\n');
+    return [service.date, service.km, service.title, service.category, items, service.notes, serviceTotalCost(service)];
+  });
   const csv = [headers, ...rows].map(row => row.map(value =>
     `"${String(value ?? '').replace(/"/g, '""')}"`
   ).join(';')).join('\r\n');
@@ -1126,13 +1216,30 @@ document.addEventListener('click', event => {
   }
   const button = event.target.closest('button');
   if (!button) return;
-  if (button.dataset.editService) {
+  if (button.id === 'addServiceItem') {
+    const rows = [...$('#serviceItems').querySelectorAll('.service-item-row')].map(row => ({
+      description: row.querySelector('[data-item-description]').value,
+      cost: row.querySelector('[data-item-cost]').value
+    }));
+    rows.push({ description: '', cost: '' });
+    renderServiceItems(rows);
+  } else if (button.hasAttribute('data-remove-service-item')) {
+    button.closest('.service-item-row').remove();
+    updateServiceCostTotal();
+  } else if (button.dataset.editService) {
     const service = data.services.find(item => item.id === button.dataset.editService);
     if (!service) return;
     const form = $('#serviceForm');
     for (const [key, value] of Object.entries(service)) {
       if (form.elements.namedItem(key)) form.elements.namedItem(key).value = value ?? '';
     }
+    const items = getServiceItems(service);
+    const isLegacyCostOnly = (!Array.isArray(service.items) || service.items.length === 0) &&
+      !String(service.parts ?? '').trim() &&
+      service.cost !== '' && service.cost !== null && service.cost !== undefined;
+    renderServiceItems(isLegacyCostOnly ? [{ description: '', cost: '' }] :
+      items.length ? items : [{ description: '', cost: '' }]);
+    updateLegacyCostNotice(isLegacyCostOnly ? service.cost : '');
     editingServiceId = service.id;
     $('#serviceSubmit').firstElementChild.textContent = t('editService');
     $('#cancelServiceEdit').hidden = false;
@@ -1164,19 +1271,54 @@ $('#serviceForm').addEventListener('submit', event => {
     toast(t('kilometerValidation'));
     return;
   }
+  const serviceItems = [...document.querySelectorAll('.service-item-row')].map(row => ({
+    description: row.querySelector('[data-item-description]').value.trim(),
+    cost: row.querySelector('[data-item-cost]').value,
+    valid: row.querySelector('[data-item-cost]').validity.valid,
+    descriptionInput: row.querySelector('[data-item-description]'),
+    costInput: row.querySelector('[data-item-cost]')
+  }));
+  const activeItems = serviceItems.filter(item => item.description || item.cost !== '' || !item.valid);
+  const incompleteItem = activeItems.find(item =>
+    !item.description || (item.cost !== '' && (!item.valid || Number(item.cost) < 0))
+  );
+  if (incompleteItem) {
+    toast(t('itemValidation'));
+    (incompleteItem.description ? incompleteItem.costInput : incompleteItem.descriptionInput).focus();
+    return;
+  }
   const entry = {
     title: String(values.get('title')).trim(),
     date: values.get('date'),
     km: km === '' ? '' : Number(km),
     category: values.get('category'),
-    parts: String(values.get('parts')).trim(),
     notes: String(values.get('notes')).trim(),
-    cost: values.get('cost') === '' ? '' : Number(values.get('cost'))
+    items: activeItems.map(item => ({
+      description: item.description,
+      cost: item.cost === '' ? '' : Number(item.cost)
+    })),
+    parts: '',
+    cost: ''
   };
+  entry.parts = entry.items.map(item => item.description).filter(Boolean).join(', ');
+  const allItemsCosted = entry.items.length > 0 && entry.items.every(item =>
+    item.cost !== '' && Number.isFinite(item.cost) && item.cost >= 0
+  );
+  entry.cost = allItemsCosted ? sumItemCosts(entry.items.map(item => item.cost)) : '';
   if (!entry.title) return;
   if (editingServiceId) {
     const index = data.services.findIndex(service => service.id === editingServiceId);
-    if (index >= 0) data.services[index] = { ...data.services[index], ...entry };
+    if (index >= 0) {
+      const current = data.services[index];
+      const isLegacyCostOnly = (!Array.isArray(current.items) || current.items.length === 0) &&
+        !String(current.parts ?? '').trim() &&
+        current.cost !== '' && current.cost !== null && current.cost !== undefined;
+      if (!entry.items.length && isLegacyCostOnly) {
+        entry.parts = current.parts || '';
+        entry.cost = current.cost;
+      }
+      data.services[index] = { ...current, ...entry };
+    }
     toast(t('serviceUpdated'));
   } else {
     data.services.unshift({ id: crypto.randomUUID(), ...entry });
@@ -1188,6 +1330,13 @@ $('#serviceForm').addEventListener('submit', event => {
 });
 
 $('#cancelServiceEdit').addEventListener('click', resetServiceForm);
+
+$('#serviceItems').addEventListener('input', updateServiceCostTotal);
+$('#serviceItems').addEventListener('invalid', event => {
+  if (!event.target.matches('[data-item-cost]')) return;
+  event.preventDefault();
+  toast(t('itemValidation'));
+}, true);
 
 $('#reminderForm').addEventListener('submit', event => {
   event.preventDefault();
@@ -1244,8 +1393,13 @@ $('#vehicleForm').elements.model.addEventListener('change', () => {
 });
 
 $('#languageSelect').addEventListener('change', event => {
+  const items = [...document.querySelectorAll('.service-item-row')].map(row => ({
+    description: row.querySelector('[data-item-description]').value,
+    cost: row.querySelector('[data-item-cost]').value
+  }));
   data.language = event.target.value === 'en' ? 'en' : 'es';
   persist();
+  renderServiceItems(items.length ? items : [{ description: '', cost: '' }]);
   toast(t('languageChanged'));
 });
 
@@ -1334,4 +1488,5 @@ if ('serviceWorker' in navigator) {
 }
 
 $('#serviceForm').elements.date.value = localDateString();
+renderServiceItems();
 render();

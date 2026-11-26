@@ -74,8 +74,15 @@
           <label><span data-i18n="date">Fecha</span><input name="date" type="date" required></label>
           <label><span data-i18n="mileageKm">Kilometraje (km)</span><input name="km" type="number" min="0" step="1" placeholder="Opcional" data-i18n-placeholder="optional"></label>
           <label><span data-i18n="category">Categoría</span><select name="category"><option value="Motor" data-category="catEngine">Motor</option><option value="Refrigeración" data-category="catCooling">Refrigeración</option><option value="Embrague / caja" data-category="catClutch">Embrague / caja</option><option value="Cardán / grupo cónico" data-category="catDrive">Cardán / grupo cónico</option><option value="Frenos" data-category="catBrakes">Frenos</option><option value="Suspensión" data-category="catSuspension">Suspensión</option><option value="Electricidad" data-category="catElectrical">Electricidad</option><option value="Neumáticos" data-category="catTires">Neumáticos</option><option value="Otro" data-category="catOther">Otro</option></select></label>
-          <label><span data-i18n="costEuros">Coste total (€)</span><input name="cost" type="number" min="0" step="0.01" placeholder="Opcional" data-i18n-placeholder="optional"></label>
-          <label class="full"><span data-i18n="partsReferences">Piezas / referencias</span><input name="parts" maxlength="240" placeholder="Referencia, marca o nota de compatibilidad" data-i18n-placeholder="partsPlaceholder"></label>
+          <div class="full service-items-section">
+            <span class="field-label" data-i18n="partsReferences">Piezas / referencias</span>
+            <div id="serviceItems" class="service-items"></div>
+            <p class="legacy-cost-note" id="legacyCostNote" hidden></p>
+            <div class="service-items-footer">
+              <button class="secondary-button" id="addServiceItem" type="button" data-i18n="addServiceItem">Añadir pieza</button>
+              <strong><span data-i18n="serviceTotal">Total de la intervención</span>: <span id="serviceCostTotal">—</span></strong>
+            </div>
+          </div>
           <label class="full"><span data-i18n="notes">Notas</span><textarea name="notes" rows="3" maxlength="1200" placeholder="Observaciones de esta intervención" data-i18n-placeholder="serviceNotesPlaceholder"></textarea></label>
           <div class="form-actions full"><button class="primary-button" id="serviceSubmit" type="submit"><span data-i18n="saveService">Guardar intervención</span><span>↗</span></button><button class="secondary-button" id="cancelServiceEdit" type="button" hidden data-i18n="cancelEdit">Cancelar edición</button></div>
         </form>
