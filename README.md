@@ -26,6 +26,10 @@ The technical library displays one sheet for the active motorcycle in the garage
 
 Documents are opened in their original language. Full responses are cached by the service worker when available; the PDF reader or download link should be used once online before relying on a copy offline. The app is developed by Sr. Balloneta.
 
+## Video tribute
+
+The user-supplied BMW K tribute video is included at `media/bmw-k-series-tribute.mp4`. The service worker pre-caches it with the app, so the video is available offline after the updated app has been installed while online.
+
 ## Reference photo
 
 The temporary cover photo is “BMW K75S”, a 1991 BMW K75S photographed by Marc Mongenet, from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:BMW_K75S.jpg), licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). It is not the user's motorcycle.
